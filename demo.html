@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Demo Automática • IoT Carbot</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="bg-dark text-white">
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-dark bg-success shadow">
+    <div class="container-fluid">
+      <a href="index.html" class="navbar-brand fw-bold">⬅ IoT Carbot</a>
+      <span class="fw-light small">Demo Automática</span>
+    </div>
+  </nav>
+
+  <main class="container py-4">
+
+    <!-- Estado actual en ejecución (WS) -->
+    <section class="mb-4">
+      <div class="card bg-transparent border-0">
+        <div class="card-body text-center">
+          <h3 class="fw-bold">🤖 Acción en ejecución</h3>
+          <div id="currentAction" class="fs-4 text-warning fw-bold">...</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="row g-4">
+      <!-- Constructor de Pasos -->
+      <div class="col-lg-7">
+        <div class="card shadow-sm border-0" style="background:#131a29">
+          <div class="card-body">
+            <h4 class="fw-bold mb-3">🧩 Constructor de Pasos</h4>
+
+            <div class="row g-3 align-items-end">
+              <div class="col-md-6">
+                <label class="form-label">Movimiento (catálogo)</label>
+                <select id="selMove" class="form-select">
+                  <option disabled selected value="">Seleccione movimiento…</option>
+                  <!-- demo.js llenará según MOVES -->
+                </select>
+                <small class="text-secondary">
+                  Catálogo: (1) Adelante · (2) Atrás · (3) Detener · (4) V. adelante derecha · (5) V. adelante izquierda · (6) V. atrás derecha · (7) V. atrás izquierda · (8) 90° der · (9) 90° izq · (10) 360° der · (11) 360° izq
+                </small>
+              </div>
+
+              <div class="col-md-3">
+                <label class="form-label">Duración (ms)</label>
+                <input id="inpDuration" type="number" class="form-control" min="100" step="100" placeholder="800" />
+              </div>
+
+              <div class="col-md-3 d-grid">
+                <button id="btnAddStep" class="btn btn-success fw-bold">
+                  ➕ Agregar paso
+                </button>
+              </div>
+            </div>
+
+            <div class="mt-4 d-flex gap-2 flex-wrap">
+              <button id="btnLoadExample" class="btn btn-outline-light btn-sm">Cargar ejemplo</button>
+              <button id="btnClearSteps" class="btn btn-outline-danger btn-sm">Limpiar pasos</button>
+            </div>
+
+            <div class="table-responsive mt-3">
+              <table class="table table-dark table-striped table-sm align-middle mb-0">
+                <thead>
+                  <tr>
+                    <th style="width:70px">#</th>
+                    <th>Movimiento</th>
+                    <th style="width:140px">Duración (ms)</th>
+                    <th style="width:190px">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tblSteps">
+                  <!-- demo.js renderiza filas {step_no, status_clave, name, duration_ms} -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Crear / Ejecutar DEMO -->
+      <div class="col-lg-5">
+        <div class="card shadow-sm border-0 mb-4" style="background:#131a29">
+          <div class="card-body">
+            <h4 class="fw-bold mb-3">🆕 Crear DEMO</h4>
+
+            <div class="mb-3">
+              <label class="form-label">Nombre de la secuencia</label>
+              <input id="inpDemoName" type="text" class="form-control" placeholder="DEMO_Cuadrado" />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Owner Device ID</label>
+              <input id="inpOwnerDevice" type="number" class="form-control" min="1" value="1" />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Pasos (JSON generado)</label>
+              <textarea id="taStepsJson" class="form-control" rows="6" readonly placeholder="[ ... ]"></textarea>
+              <small class="text-secondary">Se genera automáticamente con los pasos del constructor (arriba).</small>
+            </div>
+
+            <div class="d-grid">
+              <button id="btnCreateDemo" class="btn btn-success fw-bold">✅ Crear Secuencia DEMO</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card shadow-sm border-0" style="background:#131a29">
+          <div class="card-body">
+            <h4 class="fw-bold mb-3">▶️ Ejecutar DEMO</h4>
+
+            <div class="d-flex gap-2 mb-3">
+              <button id="btnRefreshDemos" class="btn btn-outline-light btn-sm">Actualizar lista</button>
+              <span class="small text-secondary align-self-center">Consulta últimas 20</span>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Secuencia disponible</label>
+              <select id="selDemo" class="form-select">
+                <option disabled selected value="">Seleccione DEMO…</option>
+                <!-- demo.js llenará con /api/demo/last20 -->
+              </select>
+            </div>
+
+            <div class="row g-2">
+              <div class="col-6">
+                <label class="form-label">Device ID</label>
+                <input id="inpRunDevice" type="number" class="form-control" min="1" value="1" />
+              </div>
+              <div class="col-6">
+                <label class="form-label">Delay (ms)</label>
+                <input id="inpRunDelay" type="number" class="form-control" min="0" value="0" />
+              </div>
+            </div>
+
+            <div class="d-grid mt-3">
+              <button id="btnRunDemo" class="btn btn-primary fw-bold">🚀 Ejecutar Seleccionada</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Log de eventos (push) -->
+    <section class="mt-4">
+      <div class="card shadow-sm border-0" style="background:#131a29">
+        <div class="card-body">
+          <h5 class="fw-bold mb-2">📡 Eventos en vivo</h5>
+          <div id="demoLog" class="log-container"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Socket + Lógica -->
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script type="module" src="js/demo.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>IoT Car - Panel Principal</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-dark text-white">
+
+  <!-- Navbar Mejorada -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-gradient-primary shadow-lg sticky-top">
+    <div class="container">
+      <a class="navbar-brand fw-bold d-flex align-items-center" href="#">
+        <i class="bi bi-robot me-2 fs-4"></i>
+        IoT Car
+      </a>
+      <button class="btn btn-outline-light btn-sm" data-bs-toggle="modal" data-bs-target="#configModal">
+        <i class="bi bi-gear-fill me-1"></i>Servidor API
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero-section py-5">
+    <div class="container">
+      <div class="row justify-content-center text-center">
+        <div class="col-lg-8">
+          <h1 class="display-4 fw-bold mb-3 gradient-text">Panel de Control IoT Car</h1>
+          <p class="lead text-light mb-5">Sistema integral de control y monitoreo para tu carro IoT</p>
+        </div>
+      </div>
+
+      <!-- Cards de Navegación Mejoradas -->
+      <div class="row g-4 justify-content-center">
+        <!-- Control -->
+        <div class="col-12 col-md-6 col-lg-4">
+          <a href="control.html" class="text-decoration-none">
+            <div class="card navigation-card control-card">
+              <div class="card-body text-center p-4">
+                <div class="icon-wrapper mb-3">
+                  <i class="bi bi-joystick"></i>
+                </div>
+                <h3 class="fw-bold">Control Manual</h3>
+                <p class="text-white-50">Control en tiempo real de movimientos y detección de obstáculos</p>
+                <div class="badge bg-primary">Interactivo</div>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <!-- Demo -->
+        <div class="col-12 col-md-6 col-lg-4">
+          <a href="demo.html" class="text-decoration-none">
+            <div class="card navigation-card demo-card">
+              <div class="card-body text-center p-4">
+                <div class="icon-wrapper mb-3">
+                  <i class="bi bi-play-circle"></i>
+                </div>
+                <h3 class="fw-bold">Secuencias Automáticas</h3>
+                <p class="text-white-50">Programa y ejecuta rutinas predefinidas</p>
+                <div class="badge bg-success">Automático</div>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <!-- Monitoreo -->
+        <div class="col-12 col-md-6 col-lg-4">
+          <a href="monitor.html" class="text-decoration-none">
+            <div class="card navigation-card monitor-card">
+              <div class="card-body text-center p-4">
+                <div class="icon-wrapper mb-3">
+                  <i class="bi bi-graph-up"></i>
+                </div>
+                <h3 class="fw-bold">Monitoreo en Vivo</h3>
+                <p class="text-white-50">Seguimiento en tiempo real del estado del robot</p>
+                <div class="badge bg-info">Tiempo Real</div>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-dark border-top border-secondary mt-5 py-4">
+    <div class="container text-center">
+      <p class="text-secondary mb-0">
+        <i class="bi bi-cpu me-1"></i>Amanda Cabrales Vega
+      </p>
+    </div>
+  </footer>
+
+  <!-- Modal Configuración Servidor -->
+  <div class="modal fade" id="configModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content bg-dark text-white border-0 shadow-lg">
+        <div class="modal-header border-secondary">
+          <h5 class="modal-title">
+            <i class="bi bi-server me-2"></i>Configuración del Servidor
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="apiInput" class="form-label">Dirección del servidor API</label>
+            <input type="text" id="apiInput" class="form-control bg-secondary border-dark text-white" placeholder="http://IP:5500">
+            <div class="form-text text-light">Ejemplo: http://54.157.99.97:5500</div>
+          </div>
+        </div>
+        <div class="modal-footer border-secondary">
+          <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancelar</button>
+          <button id="btnSaveApi" class="btn btn-primary">
+            <i class="bi bi-check-lg me-1"></i>Guardar Configuración
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script type="module">
+    import { getApiBase, setApiBase } from "./js/config.js";
+
+    document.getElementById("apiInput").value = getApiBase();
+
+    document.getElementById("btnSaveApi").addEventListener("click", () => {
+      const inputValue = document.getElementById("apiInput").value;
+      setApiBase(inputValue);
+      // Cerrar modal después de guardar
+      const modal = bootstrap.Modal.getInstance(document.getElementById('configModal'));
+      modal.hide();
+    });
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Monitoreo en Vivo - IoT Carbot</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+
+</head>
+<body class="bg-dark text-white">
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-dark bg-info shadow-lg">
+    <div class="container-fluid">
+      <a href="index.html" class="navbar-brand fw-bold">⬅ IoT Carbot</a>
+      <span class="fw-light small">📡 Monitoreo en vivo</span>
+
+      <!-- Indicador WS -->
+      <span id="wsStatus" class="badge bg-secondary ms-2">WS: OFF</span>
+    </div>
+  </nav>
+
+  <main class="container py-4">
+
+    <!-- Tarjetas de estado -->
+    <section class="row g-4 mb-4 text-center">
+
+      <!-- Movimiento Actual -->
+      <div class="col-md-6">
+        <div class="card status-card border-0 shadow-lg bg-gradient" id="cardMove">
+          <div class="card-body">
+            <h4 class="fw-bold">🎮 Movimiento Actual</h4>
+            <div class="display-6 text-info fw-bold" id="liveMove">...</div>
+            <small id="liveMoveTime" class="text-white-50"></small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Obstáculo Actual -->
+      <div class="col-md-6">
+        <div class="card status-card border-0 shadow-lg bg-gradient" id="cardObstacle">
+          <div class="card-body">
+            <h4 class="fw-bold">🚧 Obstáculo Detectado</h4>
+            <div class="display-6 text-warning fw-bold" id="liveObs">...</div>
+            <small id="liveObsTime" class="text-white-50"></small>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Tablas de Ultimos Eventos -->
+    <section class="row g-4">
+
+      <!-- Ultimos 10 Movimientos -->
+      <div class="col-lg-6">
+        <div class="card bg-transparent border-0 shadow-sm">
+          <div class="card-body">
+            <h5 class="fw-bold">📋 Últimos 10 movimientos</h5>
+            <div class="table-responsive">
+              <table class="table table-dark table-striped table-sm">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Movimiento</th>
+                    <th>Fecha/Hora</th>
+                  </tr>
+                </thead>
+                <tbody id="tblMoveLog"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ultimos 10 Obstáculos -->
+      <div class="col-lg-6">
+        <div class="card bg-transparent border-0 shadow-sm">
+          <div class="card-body">
+            <h5 class="fw-bold">⚠️ Últimos 10 obstáculos</h5>
+            <div class="table-responsive">
+              <table class="table table-dark table-striped table-sm">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Obstáculo</th>
+                    <th>Fecha/Hora</th>
+                  </tr>
+                </thead>
+                <tbody id="tblObsLog"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Log WS -->
+    <section class="mt-5">
+      <div class="card bg-transparent border-0 shadow-lg">
+        <div class="card-body">
+          <h6 class="fw-bold mb-2">🛰 Log de eventos WebSocket</h6>
+          <div id="wsLog" class="log-container"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Scripts -->
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script type="module" src="js/monitor.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
