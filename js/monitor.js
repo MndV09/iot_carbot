@@ -9,29 +9,31 @@
 
 import { movement, obstacle } from "./api.js";
 import { connectSocket } from "./sockets.js";
-import { MOVES_MAP, OBSTACLES, OBSTACLES_MAP } from "./catalogs.js";
+import { MOVES_MAP, OBSTACLES_MAP } from "./catalogs.js";
 import { showToast, appendLog } from "./ui.js";
 
 const $ = (s) => document.querySelector(s);
 
-const DEVICE_ID = Number(localStorage.getItem("DEVICE_ID") || "1");
+// Lee ?device_id=...; si no viene, usa 1
+const DEVICE_ID = Number(new URLSearchParams(location.search).get("device_id") || 1);
 
 // Elements UI
-const wsStatus      = $("#wsStatus");
-const liveMove      = $("#liveMove");
-const liveMoveTime  = $("#liveMoveTime");
-const liveObs       = $("#liveObs");
-const liveObsTime   = $("#liveObsTime");
+const wsStatus     = $("#wsStatus");
+const liveMove     = $("#liveMove");
+const liveMoveTime = $("#liveMoveTime");
+const liveObs      = $("#liveObs");
+const liveObsTime  = $("#liveObsTime");
 
-const tblMoveLog    = $("#tblMoveLog");
-const tblObsLog     = $("#tblObsLog");
-const wsLog         = $("#wsLog");
+const tblMoveLog   = $("#tblMoveLog");
+const tblObsLog    = $("#tblObsLog");
 
 /* ========== Helpers ========== */
 
 function formatTS(ts) {
   if (!ts) return "...";
-  return ts.replace("T", " ").slice(0, 19);
+  // Acepta "YYYY-MM-DD HH:MM:SS" o ISO; render consistente
+  const s = String(ts).replace("T", " ");
+  return s.slice(0, 19);
 }
 
 function labelMove(ev) {
@@ -44,27 +46,29 @@ function labelObstacle(ev) {
   return OBSTACLES_MAP[id]?.name ?? `#${id}`;
 }
 
-function renderTableMoves(list) {
+function renderTableMoves(list = []) {
+  if (!tblMoveLog) return;
   tblMoveLog.innerHTML = "";
   list.forEach((row, i) => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${i + 1}</td>
       <td>${labelMove(row)}</td>
-      <td>${formatTS(row.event_at)}</td>
+      <td>${formatTS(row?.event_at)}</td>
     `;
     tblMoveLog.appendChild(tr);
   });
 }
 
-function renderTableObs(list) {
+function renderTableObs(list = []) {
+  if (!tblObsLog) return;
   tblObsLog.innerHTML = "";
   list.forEach((row, i) => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${i + 1}</td>
       <td>${labelObstacle(row)}</td>
-      <td>${formatTS(row.event_at)}</td>
+      <td>${formatTS(row?.event_at)}</td>
     `;
     tblObsLog.appendChild(tr);
   });
@@ -73,29 +77,33 @@ function renderTableObs(list) {
 /* ========== REST Inicial ========== */
 async function loadInitialData() {
   try {
+    // Último movimiento
     const lastMv = await movement.last(DEVICE_ID);
     const mv = lastMv?.data;
     if (mv) {
       liveMove.textContent = labelMove(mv);
-      liveMoveTime.textContent = formatTS(mv.event_at);
+      liveMoveTime.textContent = formatTS(mv?.event_at);
     }
 
+    // Últimos 10 movimientos
     const mv10 = await movement.last10(DEVICE_ID);
     renderTableMoves(mv10?.data || []);
 
+    // Último obstáculo
     const lastOb = await obstacle.last(DEVICE_ID);
     const ob = lastOb?.data;
     if (ob) {
       liveObs.textContent = labelObstacle(ob);
-      liveObsTime.textContent = formatTS(ob.event_at);
+      liveObsTime.textContent = formatTS(ob?.event_at);
     }
 
+    // Últimos 10 obstáculos
     const ob10 = await obstacle.last10(DEVICE_ID);
     renderTableObs(ob10?.data || []);
 
   } catch (err) {
     console.warn("❌ Error carga inicial:", err);
-    showToast("Error al obtener datos iniciales", "danger");
+    showToast(`Error al obtener datos iniciales: ${err.message || err}`, "danger");
   }
 }
 
@@ -104,42 +112,42 @@ function initSocket() {
   const socket = connectSocket();
 
   socket.on("connect", () => {
-    wsStatus.textContent = "WS: ON";
-    wsStatus.className = "badge bg-success";
+    if (wsStatus) {
+      wsStatus.textContent = "WS: ON";
+      wsStatus.className = "badge bg-success";
+    }
     appendLog("wsLog", "✅ Conectado!", null);
   });
 
   socket.on("disconnect", () => {
-    wsStatus.textContent = "WS: OFF";
-    wsStatus.className = "badge bg-danger";
+    if (wsStatus) {
+      wsStatus.textContent = "WS: OFF";
+      wsStatus.className = "badge bg-danger";
+    }
     appendLog("wsLog", "⚠️ Desconectado!", null);
   });
 
   socket.on("movement:new", (d) => {
     appendLog("wsLog", "🟢 movement:new", d);
-
     try {
       const id = Number(d?.status_clave ?? d?.move_clave ?? d?.id);
-      liveMove.textContent = MOVES_MAP[id]?.name || `#${id}`;
-      liveMoveTime.textContent = formatTS(d.event_at);
-
+      if (liveMove) liveMove.textContent = MOVES_MAP[id]?.name || `#${id}`;
+      if (liveMoveTime) liveMoveTime.textContent = formatTS(d?.event_at);
       loadLast10Moves(); // refresco tabla
     } catch (err) {
-      console.warn("movement:new parse error: ", err);
+      console.warn("movement:new parse error:", err);
     }
   });
 
   socket.on("obstacle:new", (d) => {
     appendLog("wsLog", "🟡 obstacle:new", d);
-
     try {
       const id = Number(d?.status_clave ?? d?.obstacle_clave ?? d?.id);
-      liveObs.textContent = OBSTACLES_MAP[id]?.name || `#${id}`;
-      liveObsTime.textContent = formatTS(d.event_at);
-
+      if (liveObs) liveObs.textContent = OBSTACLES_MAP[id]?.name || `#${id}`;
+      if (liveObsTime) liveObsTime.textContent = formatTS(d?.event_at);
       loadLast10Obs(); // refresco tabla
     } catch (err) {
-      console.warn("obstacle:new parse error: ", err);
+      console.warn("obstacle:new parse error:", err);
     }
   });
 
@@ -153,22 +161,28 @@ function initSocket() {
 /* ========== Partial refresh ========== */
 async function loadLast10Moves() {
   try {
-    const res = await movement.last10(DEVICE_ID);
+    const res = await movement.last10(DEVICE_ID); // ✅ /last10/<id>
     renderTableMoves(res?.data || []);
-  } catch {}
+  } catch (err) {
+    console.warn("loadLast10Moves error:", err);
+  }
 }
 
 async function loadLast10Obs() {
   try {
-    const res = await obstacle.last10(DEVICE_ID);
+    const res = await obstacle.last10(DEVICE_ID); // ✅ /last10/<id>
     renderTableObs(res?.data || []);
-  } catch {}
+  } catch (err) {
+    console.warn("loadLast10Obs error:", err);
+  }
 }
 
 /* ========== INIT ========== */
 document.addEventListener("DOMContentLoaded", async () => {
-  wsStatus.textContent = "WS: ...";
-  wsStatus.className = "badge bg-secondary";
+  if (wsStatus) {
+    wsStatus.textContent = "WS: ...";
+    wsStatus.className = "badge bg-secondary";
+  }
 
   await loadInitialData();
   initSocket();

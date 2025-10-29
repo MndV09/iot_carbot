@@ -7,16 +7,9 @@ import { apiUrl } from "./config.js";
 
 // Utilidad: convertir response
 async function handleResponse(res) {
-  const text = await res.text();
-  let json = null;
-  try { json = text ? JSON.parse(text) : null; } catch {}
-  if (!res.ok) {
-    const msg = json?.detail || json?.msg || text || `HTTP ${res.status}`;
-    throw new Error(msg);   // <- verás el motivo real en consola
-  }
-  return json ?? {};
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return await res.json();
 }
-
 
 // GET helper
 async function GET(path) {
