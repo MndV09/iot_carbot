@@ -6,67 +6,166 @@
   <title>Control - IoT Carbot</title>
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
   <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body class="bg-dark text-white">
 
-  <!-- Navbar -->
-  <nav class="navbar navbar-dark bg-primary shadow">
-    <div class="container-fluid">
-      <a href="index.html" class="navbar-brand fw-bold">⬅ IoT Carbot</a>
-      <span class="fw-light small">Control Manual</span>
+  <!-- Navbar Mejorada -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-gradient-primary shadow-lg sticky-top">
+    <div class="container">
+      <a class="navbar-brand fw-bold d-flex align-items-center" href="index.html">
+        <i class="bi bi-arrow-left me-2"></i>
+        IoT Car
+      </a>
+      <span class="navbar-text fw-bold">
+        Control Manual
+      </span>
     </div>
   </nav>
 
-  <main class="container py-4">
+  <main class="container py-5">
 
-    <!-- Estado actual en ejecución -->
-    <section class="mb-4">
-      <h3 class="text-center fw-bold">🔄 Movimiento en ejecución</h3>
-      <div id="currentMove" class="text-center text-info fs-4 fw-bold">...</div>
+    <!-- Estado Actual Mejorado -->
+    <section class="mb-5">
+      <div class="card status-card glass-card border-0 shadow-lg">
+        <div class="card-body text-center p-5">
+          <h3 class="fw-bold mb-3 gradient-text">MOVIMIENTO EN EJECUCIÓN</h3>
+          <div id="currentMove" class="display-4 fw-bold text-info mb-2">Listo</div>
+          <small class="text-white-50">Estado actual del robot</small>
+        </div>
+      </div>
     </section>
 
-    <hr class="border-secondary">
+    <hr class="border-secondary my-5">
 
-    <!-- Panel de Movimiento -->
-    <section class="mt-4">
-      <h4 class="fw-bold mb-3">🎮 Movimientos</h4>
+    <!-- Panel de Movimiento Mejorado -->
+    <section class="mt-5">
+      <h4 class="fw-bold mb-4 gradient-text text-center">PANEL DE CONTROL</h4>
 
-      <div id="moveButtons" class="row g-3">
+      <div id="moveButtons" class="row g-3 justify-content-center">
         <!-- Botones generados dinámicamente -->
       </div>
     </section>
 
-    <hr class="border-secondary">
+    <hr class="border-secondary my-5">
 
-    <!-- Panel de Obstáculos -->
-    <section class="mt-4">
-      <h4 class="fw-bold mb-3">🚧 Obstáculos</h4>
+    <!-- Panel de Obstáculos Mejorado -->
+    <section class="mt-5">
+      <h4 class="fw-bold mb-4 gradient-text text-center">DETECCIÓN DE OBSTÁCULOS</h4>
 
       <div class="text-center">
-        <button id="btnAddObstacle" class="btn btn-warning btn-lg fw-bold shadow">
-          ⚠️ Registrar Obstáculo Aleatorio
+        <button id="btnAddObstacle" class="btn btn-warning btn-lg fw-bold px-5 py-3 obstacle-btn">
+          <i class="bi bi-exclamation-triangle me-2"></i>
+          REGISTRAR OBSTÁCULO ALEATORIO
         </button>
 
-        <p class="mt-3 text-secondary small">
+        <p class="mt-3 text-white-50 small">
           *Se enviará uno aleatorio de tu catálogo
         </p>
       </div>
 
-      <div class="mt-4">
-        <h5>Último obstáculo</h5>
-        <div id="lastObstacle" class="text-info fw-bold">...</div>
+      <div class="mt-5 text-center">
+        <div class="card obstacle-card glass-card border-0 shadow-lg">
+          <div class="card-body p-4">
+            <h5 class="fw-bold mb-3 gradient-text">ÚLTIMO OBSTÁCULO REGISTRADO</h5>
+            <div id="lastObstacle" class="text-warning fw-bold fs-2 mb-2">Ninguno</div>
+            <small class="text-white-50">Esperando detección...</small>
+          </div>
+        </div>
       </div>
     </section>
 
   </main>
 
-  <!-- Socket.IO + Lógica -->
+  <!-- Footer -->
+  <footer class="bg-dark border-top border-secondary mt-5 py-4">
+    <div class="container text-center">
+      <p class="text-secondary mb-0">
+        <i class="bi bi-cpu me-1"></i>Amanda Cabrales Vega
+      </p>
+    </div>
+  </footer>
+
+  <!-- Socket.IO + Lógica - EXACTAMENTE IGUAL -->
   <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
   <script type="module" src="js/control.js"></script>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <style>
+    /* ESTILOS ESPECÍFICOS PARA CONTROL.HTML */
+    
+    /* Tarjeta de estado mejorada */
+    .status-card {
+      background: linear-gradient(135deg, rgba(30, 58, 138, 0.8), rgba(55, 48, 163, 0.8)) !important;
+      backdrop-filter: blur(10px);
+      border-radius: 1.5rem;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    /* Tarjeta de obstáculos mejorada */
+    .obstacle-card {
+      background: rgba(245, 158, 11, 0.1) !important;
+      backdrop-filter: blur(10px);
+      border-radius: 1.5rem;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+    
+    /* Botón de obstáculo mejorado */
+    .obstacle-btn {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+      border: none;
+      border-radius: 1rem;
+      padding: 1rem 2rem;
+      color: white !important;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+    }
+    
+    .obstacle-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+    }
+    
+    /* Texto del estado actual */
+    #currentMove {
+      text-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
+      font-weight: 700;
+    }
+    
+    /* Mejora de separadores */
+    hr {
+      border: 1px solid rgba(255,255,255,0.15);
+      opacity: 0.6;
+    }
+    
+    /* Mejora de textos secundarios */
+    .text-white-50 {
+      color: rgba(255, 255, 255, 0.8) !important;
+    }
+    
+    /* Contenedor principal */
+    main {
+      background: radial-gradient(circle at top right, rgba(30, 58, 138, 0.1), transparent 50%),
+                  radial-gradient(circle at bottom left, rgba(245, 158, 11, 0.1), transparent 50%);
+      min-height: calc(100vh - 200px);
+    }
+    
+    /* Efectos de animación para los botones dinámicos */
+    #moveButtons .btn {
+      border-radius: 1rem;
+      transition: all 0.3s ease;
+      font-weight: 600;
+      padding: 1rem 0.5rem;
+    }
+    
+    #moveButtons .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+  </style>
 
 </body>
 </html>
