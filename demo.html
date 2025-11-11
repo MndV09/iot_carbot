@@ -199,7 +199,19 @@
 
   <!-- Socket + Lógica -->
   <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
-  <script type="module" src="js/demo.js"></script>
+  <!-- demo.html -->
+<script type="module">
+  import { demo } from "./js/api.js";
+
+  async function refreshDemos() {
+    const owner = 1; // o toma del input
+    const res = await demo.last20(owner);
+    console.log("demos:", res);
+  }
+
+  document.addEventListener("DOMContentLoaded", refreshDemos);
+</script>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
   <style>
