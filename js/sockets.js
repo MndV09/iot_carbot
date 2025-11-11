@@ -1,12 +1,37 @@
-import { io } from "https://cdn.socket.io/4.7.2/socket.io.esm.min.js";
-import { DEFAULT_API_BASE } from "./config.js";
+/* =====================================================
+   SOCKET.IO — Conexión PUSH en tiempo real
+   - Se conecta al servidor API dinámico (API_BASE)
+   - Expone connectSocket() para usar en cada página
+===================================================== */
 
-// Conectar por WS (no WSS), forzando transporte websocket para evitar polling/upgrade
+import { getApiBase } from "./config.js";
+
+let socket = null;
+
 export function connectSocket() {
-  return io(DEFAULT_API_BASE, {
+  const API_BASE = getApiBase();
+
+  if (socket && socket.connected) {
+    console.log("ℹ️ Reutilizando socket existente:", socket.id);
+    return socket;
+  }
+
+  console.log("🔌 Conectando WS a:", API_BASE);
+
+  // SOLO WebSocket (sin polling)
+  socket = io(API_BASE, {
     transports: ["websocket"],
-    upgrade: false,
-    path: "/socket.io/",
-    withCredentials: false,
+    reconnection: true,
+    reconnectionAttempts: Infinity,
+    reconnectionDelay: 1000
   });
+
+  // Logs básicos
+  socket.on("connect", () => console.log("✅ Socket conectado:", socket.id));
+  socket.on("disconnect", (reason) => console.warn("⚠️ Socket desconectado:", reason));
+  socket.on("connect_error", (err) => console.error("❌ Error WS:", err.message));
+
+  return socket;
 }
+
+console.log("✅ sockets.js cargado");
