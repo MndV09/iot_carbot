@@ -11,7 +11,7 @@
 </head>
 <body class="bg-dark text-white">
 
-  <!-- Navbar Mejorada -->
+  <!-- Navbar Mejorada (ORIGINAL) -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-gradient-primary shadow-lg sticky-top">
     <div class="container">
       <a class="navbar-brand fw-bold d-flex align-items-center" href="index.html">
@@ -26,39 +26,25 @@
 
   <main class="container py-5">
 
-    <!-- Estado Actual Mejorado - Mismo estilo que control.html -->
-    <section class="mb-5">
-      <div class="card status-card glass-card border-0 shadow-lg">
-        <div class="card-body text-center p-5">
-          <h3 class="fw-bold mb-3 gradient-text">ACCIÓN EN EJECUCIÓN</h3>
-          <div id="currentAction" class="display-4 fw-bold text-warning mb-2">...</div>
-          <small class="text-white-50">Estado actual de la secuencia</small>
-        </div>
-      </div>
-    </section>
-
     <div class="row g-4">
-      <!-- Constructor de Pasos Mejorado -->
-      <div class="col-lg-7">
-        <div class="card glass-card border-0 shadow-lg h-100">
+      <!-- Panel Superior: Constructor de Pasos -->
+      <div class="col-12">
+        <div class="card glass-card border-0 shadow-lg">
           <div class="card-body">
             <h4 class="fw-bold mb-4 gradient-text">
               <i class="bi bi-puzzle me-2"></i>Constructor de Pasos
             </h4>
 
             <div class="row g-3 align-items-end">
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <label class="form-label text-white">Movimiento (catálogo)</label>
                 <select id="selMove" class="form-select">
                   <option disabled selected value="">Seleccione movimiento…</option>
                   <!-- demo.js llenará según MOVES -->
                 </select>
-                <small class="text-white-50">
-                  Catálogo: (1) Adelante · (2) Atrás · (3) Detener · (4) V. adelante derecha · (5) V. adelante izquierda · (6) V. atrás derecha · (7) V. atrás izquierda · (8) 90° der · (9) 90° izq · (10) 360° der · (11) 360° izq
-                </small>
               </div>
 
-              <div class="col-md-3">
+              <div class="col-md-2">
                 <label class="form-label text-white">Duración (ms)</label>
                 <input id="inpDuration" type="number" class="form-control" min="100" step="100" placeholder="800" />
               </div>
@@ -68,18 +54,24 @@
                   <i class="bi bi-plus-circle me-1"></i>Agregar Paso
                 </button>
               </div>
+
+              <div class="col-md-3 d-flex gap-2">
+                <button id="btnLoadExample" class="btn btn-outline-light btn-sm flex-fill">
+                  <i class="bi bi-cloud-download me-1"></i>Ejemplo
+                </button>
+                <button id="btnClearSteps" class="btn btn-outline-danger btn-sm flex-fill">
+                  <i class="bi bi-trash me-1"></i>Limpiar
+                </button>
+              </div>
             </div>
 
-            <div class="mt-4 d-flex gap-2 flex-wrap">
-              <button id="btnLoadExample" class="btn btn-outline-light btn-sm">
-                <i class="bi bi-cloud-download me-1"></i>Cargar Ejemplo
-              </button>
-              <button id="btnClearSteps" class="btn btn-outline-danger btn-sm">
-                <i class="bi bi-trash me-1"></i>Limpiar Pasos
-              </button>
+            <div class="mt-2">
+              <small class="text-white-50">
+                Catálogo: (1) Adelante · (2) Atrás · (3) Detener · (4) V. adelante derecha · (5) V. adelante izquierda · (6) V. atrás derecha · (7) V. atrás izquierda · (8) 90° der · (9) 90° izq · (10) 360° der · (11) 360° izq
+              </small>
             </div>
 
-            <div class="table-responsive mt-4">
+            <div class="table-responsive mt-3">
               <table class="table table-dark table-striped table-sm align-middle mb-0">
                 <thead>
                   <tr>
@@ -98,10 +90,9 @@
         </div>
       </div>
 
-      <!-- Panel Derecho Mejorado -->
-      <div class="col-lg-5">
-        <!-- Crear DEMO Mejorado -->
-        <div class="card glass-card border-0 shadow-lg mb-4">
+      <!-- Panel Inferior Izquierdo: Crear Secuencia -->
+      <div class="col-lg-6">
+        <div class="card glass-card border-0 shadow-lg h-100">
           <div class="card-body">
             <h4 class="fw-bold mb-4 gradient-text">
               <i class="bi bi-plus-square me-2"></i>Crear Secuencia
@@ -119,7 +110,7 @@
 
             <div class="mb-3">
               <label class="form-label text-white">Pasos (JSON generado)</label>
-              <textarea id="taStepsJson" class="form-control" rows="6" readonly placeholder="[ ... ]"></textarea>
+              <textarea id="taStepsJson" class="form-control" rows="5" readonly placeholder="[ ... ]"></textarea>
               <small class="text-white-50">Se genera automáticamente con los pasos del constructor.</small>
             </div>
 
@@ -130,9 +121,12 @@
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- Ejecutar DEMO Mejorado -->
-        <div class="card glass-card border-0 shadow-lg">
+      <!-- Panel Inferior Derecho: Ejecutar + Log -->
+      <div class="col-lg-6">
+        <!-- Ejecutar DEMO -->
+        <div class="card glass-card border-0 shadow-lg mb-4">
           <div class="card-body">
             <h4 class="fw-bold mb-4 gradient-text">
               <i class="bi bi-play-circle me-2"></i>Ejecutar Secuencia
@@ -171,20 +165,18 @@
             </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <!-- Log de Eventos Mejorado -->
-    <section class="mt-5">
-      <div class="card glass-card border-0 shadow-lg">
-        <div class="card-body">
-          <h5 class="fw-bold mb-3 gradient-text">
-            <i class="bi bi-broadcast me-2"></i>Eventos en Vivo
-          </h5>
-          <div id="demoLog" class="log-container"></div>
+        <!-- Log de Eventos -->
+        <div class="card glass-card border-0 shadow-lg">
+          <div class="card-body">
+            <h5 class="fw-bold mb-3 gradient-text">
+              <i class="bi bi-broadcast me-2"></i>Eventos en Vivo
+            </h5>
+            <div id="demoLog" class="log-container"></div>
+          </div>
         </div>
       </div>
-    </section>
+    </div>
 
   </main>
 
@@ -284,7 +276,7 @@
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 0.75rem;
       padding: 1rem;
-      height: 200px;
+      height: 180px;
       overflow-y: auto;
       font-family: 'Monaco', 'Consolas', monospace;
       font-size: 0.85rem;
@@ -315,6 +307,11 @@
     
     #demoLog div {
       color: #ffffff !important;
+    }
+
+    /* Alturas fijas para mejor distribución */
+    .card {
+      min-height: auto;
     }
   </style>
 </body>

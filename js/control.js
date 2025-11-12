@@ -1,8 +1,8 @@
 /* =====================================================
    CONTROL DE MOVIMIENTOS Y OBSTÁCULOS (Front-End)
-   - Botones dinámicos de movimiento (catálogo)
+   - Botones fijos de movimiento con diseño gamepad
    - Botón para registrar obstáculo aleatorio
-   - Estado “en ejecución” y último obstáculo
+   - Estado "en ejecución" y último obstáculo
    - Push en tiempo real con Socket.IO
 ===================================================== */
 
@@ -13,8 +13,8 @@ import { getApiBase } from "./config.js";
 
 // ----- Elementos del DOM -----
 const $ = (sel) => document.querySelector(sel);
+const $$ = (sel) => document.querySelectorAll(sel);
 
-const moveButtonsBox = $("#moveButtons");
 const currentMoveEl  = $("#currentMove");
 const lastObstacleEl = $("#lastObstacle");
 const btnAddObstacle = $("#btnAddObstacle");
@@ -43,30 +43,20 @@ function setLastObstacleText(o) {
   lastObstacleEl.textContent = `(${ts}) ${id} • ${name}${dist}`;
 }
 
-function btn(label, onClick, extraClass = "") {
-  const b = document.createElement("button");
-  b.type = "button";
-  b.className = `btn btn-outline-light w-100 fw-semibold ${extraClass}`;
-  b.textContent = label;
-  b.addEventListener("click", onClick);
-  return b;
-}
-
-// ----- Render dinámico de botones de movimiento -----
-function renderMoveButtons() {
-  moveButtonsBox.innerHTML = "";
-  // Grid: 2-3 columnas responsivas
-  MOVES.forEach(mv => {
-    const col = document.createElement("div");
-    col.className = "col-6 col-md-4 col-lg-3";
-
-    const label = `${mv.id} • ${mv.name}`;
-    const b = btn(label, async () => {
-      await sendMovement(mv.id);
-    }, "py-3");
-
-    col.appendChild(b);
-    moveButtonsBox.appendChild(col);
+// ----- Wire up botones fijos -----
+function wireMovementButtons() {
+  const buttons = $$('[data-move]');
+  buttons.forEach(button => {
+    button.addEventListener('click', async () => {
+      const moveId = parseInt(button.getAttribute('data-move'));
+      await sendMovement(moveId);
+      
+      // Efecto visual de feedback
+      button.style.transform = 'translateY(-1px) scale(0.95)';
+      setTimeout(() => {
+        button.style.transform = '';
+      }, 150);
+    });
   });
 }
 
@@ -80,12 +70,11 @@ async function sendMovement(statusClave) {
       sequence_id: null
     };
     const res = await movement.add(payload);
-    // Actualiza inmediatamente el estado “en ejecución”
+    // Actualiza inmediatamente el estado "en ejecución"
     const eventAt =
       res?.data?.event_at ||
       new Date().toISOString().slice(0, 19).replace("T", " ");
     setCurrentMoveText(statusClave, eventAt);
-    // console log para depurar
     console.log("POST /movement/add OK:", res);
   } catch (err) {
     console.error("POST /movement/add error:", err);
@@ -107,7 +96,7 @@ async function sendRandomObstacle() {
     };
     const res = await obstacle.add(payload);
     console.log("POST /obstacle/add OK:", res);
-    // Refresca “último obstáculo”
+    // Refresca "último obstáculo"
     await loadLastObstacle();
   } catch (err) {
     console.error("POST /obstacle/add error:", err);
@@ -143,7 +132,6 @@ async function loadLastObstacle() {
 
 // ----- Socket.IO (Push) -----
 function initSocket() {
-  // Nota: sockets.js debe usar la misma API_BASE y habilitar ["websocket","polling"]
   const socket = connectSocket();
 
   socket.on("connect", () => {
@@ -180,12 +168,12 @@ function initSocket() {
 // ----- Eventos UI -----
 function wireUI() {
   btnAddObstacle.addEventListener("click", sendRandomObstacle);
+  wireMovementButtons();
 }
 
 // ----- Init -----
 document.addEventListener("DOMContentLoaded", async () => {
   console.log("Control • API:", getApiBase(), "Device:", DEVICE_ID);
-  renderMoveButtons();
   wireUI();
   initSocket();
 

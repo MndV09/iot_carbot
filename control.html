@@ -30,22 +30,119 @@
     <!-- Estado Actual Mejorado -->
     <section class="mb-5">
       <div class="card status-card glass-card border-0 shadow-lg">
-        <div class="card-body text-center p-5">
+        <div class="card-body text-center p-4">
           <h3 class="fw-bold mb-3 gradient-text">MOVIMIENTO EN EJECUCIÓN</h3>
-          <div id="currentMove" class="display-4 fw-bold text-info mb-2">Listo</div>
+          <div id="currentMove" class="display-6 fw-bold text-info mb-2">Listo</div>
           <small class="text-white-50">Estado actual del robot</small>
         </div>
       </div>
     </section>
 
-    <hr class="border-secondary my-5">
-
-    <!-- Panel de Movimiento Mejorado -->
+    <!-- Panel de Control Tipo D-Pad -->
     <section class="mt-5">
       <h4 class="fw-bold mb-4 gradient-text text-center">PANEL DE CONTROL</h4>
+      
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="card glass-card border-0 shadow-lg">
+            <div class="card-body p-4">
+              
+              <!-- Fila 1: Movimientos Diagonales Adelante -->
+              <div class="row mb-3 justify-content-center">
+                <div class="col-4 text-center px-2">
+                  <button class="btn btn-control-directional w-100 py-2" data-move="5">
+                    <i class="bi bi-arrow-up-left"></i>
+                    <br>
+                    <small>V. Adelante Izq</small>
+                  </button>
+                </div>
+                <div class="col-4 text-center px-2">
+                  <button class="btn btn-control-primary w-100 py-3" data-move="1">
+                    <i class="bi bi-arrow-up"></i>
+                    <br>
+                    <small>Adelante</small>
+                  </button>
+                </div>
+                <div class="col-4 text-center px-2">
+                  <button class="btn btn-control-directional w-100 py-2" data-move="4">
+                    <i class="bi bi-arrow-up-right"></i>
+                    <br>
+                    <small>V. Adelante Der</small>
+                  </button>
+                </div>
+              </div>
 
-      <div id="moveButtons" class="row g-3 justify-content-center">
-        <!-- Botones generados dinámicamente -->
+              <!-- Fila 2: Movimientos Laterales y Detener -->
+              <div class="row mb-3 justify-content-center align-items-center">
+                <div class="col-4 text-center px-2">
+                  <!-- Columna Izquierda: Giros 90° y 360° Izquierda -->
+                  <div class="d-flex flex-column gap-2">
+                    <button class="btn btn-control-rotation w-100 py-2" data-move="9">
+                      <i class="bi bi-arrow-left"></i>
+                      <br>
+                      <small>90° Izq</small>
+                    </button>
+                    <button class="btn btn-control-rotation w-100 py-2" data-move="11">
+                      <i class="bi bi-arrow-counterclockwise"></i>
+                      <br>
+                      <small>360° Izq</small>
+                    </button>
+                  </div>
+                </div>
+                
+                <div class="col-4 text-center px-2">
+                  <button class="btn btn-control-danger w-100 py-3" data-move="3">
+                    <i class="bi bi-stop-fill"></i>
+                    <br>
+                    <small>Detener</small>
+                  </button>
+                </div>
+                
+                <div class="col-4 text-center px-2">
+                  <!-- Columna Derecha: Giros 90° y 360° Derecha -->
+                  <div class="d-flex flex-column gap-2">
+                    <button class="btn btn-control-rotation w-100 py-2" data-move="8">
+                      <i class="bi bi-arrow-right"></i>
+                      <br>
+                      <small>90° Der</small>
+                    </button>
+                    <button class="btn btn-control-rotation w-100 py-2" data-move="10">
+                      <i class="bi bi-arrow-clockwise"></i>
+                      <br>
+                      <small>360° Der</small>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Fila 3: Movimientos Diagonales Atrás -->
+              <div class="row justify-content-center">
+                <div class="col-4 text-center px-2">
+                  <button class="btn btn-control-directional w-100 py-2" data-move="7">
+                    <i class="bi bi-arrow-down-left"></i>
+                    <br>
+                    <small>V. Atrás Izq</small>
+                  </button>
+                </div>
+                <div class="col-4 text-center px-2">
+                  <button class="btn btn-control-primary w-100 py-3" data-move="2">
+                    <i class="bi bi-arrow-down"></i>
+                    <br>
+                    <small>Atrás</small>
+                  </button>
+                </div>
+                <div class="col-4 text-center px-2">
+                  <button class="btn btn-control-directional w-100 py-2" data-move="6">
+                    <i class="bi bi-arrow-down-right"></i>
+                    <br>
+                    <small>V. Atrás Der</small>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -56,7 +153,7 @@
       <h4 class="fw-bold mb-4 gradient-text text-center">DETECCIÓN DE OBSTÁCULOS</h4>
 
       <div class="text-center">
-        <button id="btnAddObstacle" class="btn btn-warning btn-lg fw-bold px-5 py-3 obstacle-btn">
+        <button id="btnAddObstacle" class="btn btn-lg fw-bold px-5 py-3 obstacle-btn">
           <i class="bi bi-exclamation-triangle me-2"></i>
           REGISTRAR OBSTÁCULO ALEATORIO
         </button>
@@ -88,7 +185,7 @@
     </div>
   </footer>
 
-  <!-- Socket.IO + Lógica - EXACTAMENTE IGUAL -->
+  <!-- Socket.IO + Lógica -->
   <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
   <script type="module" src="js/control.js"></script>
 
@@ -96,6 +193,16 @@
 
   <style>
     /* ESTILOS ESPECÍFICOS PARA CONTROL.HTML */
+    
+    /* Paleta de colores que combina con el tema */
+    :root {
+      --primary-blue: #667eea;
+      --primary-purple: #764ba2;
+      --accent-teal: #4fd1c5;
+      --accent-pink: #ed64a6;
+      --warning-amber: #f6ad55;
+      --danger-coral: #fc8181;
+    }
     
     /* Tarjeta de estado mejorada */
     .status-card {
@@ -107,32 +214,34 @@
     
     /* Tarjeta de obstáculos mejorada */
     .obstacle-card {
-      background: rgba(245, 158, 11, 0.1) !important;
+      background: rgba(102, 126, 234, 0.1) !important;
       backdrop-filter: blur(10px);
       border-radius: 1.5rem;
-      border: 1px solid rgba(245, 158, 11, 0.3);
+      border: 1px solid rgba(102, 126, 234, 0.3);
     }
     
     /* Botón de obstáculo mejorado */
     .obstacle-btn {
-      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+      background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple)) !important;
       border: none;
       border-radius: 1rem;
       padding: 1rem 2rem;
       color: white !important;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
     }
     
     .obstacle-btn:hover {
       transform: translateY(-3px);
-      box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+      background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue)) !important;
     }
     
     /* Texto del estado actual */
     #currentMove {
-      text-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
+      text-shadow: 0 0 20px rgba(102, 126, 234, 0.6);
       font-weight: 700;
+      color: var(--accent-teal) !important;
     }
     
     /* Mejora de separadores */
@@ -148,22 +257,165 @@
     
     /* Contenedor principal */
     main {
-      background: radial-gradient(circle at top right, rgba(30, 58, 138, 0.1), transparent 50%),
-                  radial-gradient(circle at bottom left, rgba(245, 158, 11, 0.1), transparent 50%);
+      background: radial-gradient(circle at top right, rgba(102, 126, 234, 0.1), transparent 50%),
+                  radial-gradient(circle at bottom left, rgba(118, 75, 162, 0.1), transparent 50%);
       min-height: calc(100vh - 200px);
     }
     
-    /* Efectos de animación para los botones dinámicos */
-    #moveButtons .btn {
-      border-radius: 1rem;
+    /* Botones de control mejorados - Nueva paleta de colores */
+    .btn-control-primary {
+      background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple)) !important;
+      border: none;
+      border-radius: 0.8rem;
+      color: white !important;
       transition: all 0.3s ease;
-      font-weight: 600;
-      padding: 1rem 0.5rem;
+      box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
+      font-size: 0.9rem;
     }
     
-    #moveButtons .btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    .btn-control-primary:hover {
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+      background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue)) !important;
+    }
+    
+    .btn-control-directional {
+      background: linear-gradient(135deg, var(--accent-teal), #38b2ac) !important;
+      border: none;
+      border-radius: 0.8rem;
+      color: white !important;
+      transition: all 0.3s ease;
+      box-shadow: 0 3px 10px rgba(79, 209, 197, 0.3);
+      font-size: 0.85rem;
+    }
+    
+    .btn-control-directional:hover {
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 5px 15px rgba(79, 209, 197, 0.4);
+      background: linear-gradient(135deg, #38b2ac, var(--accent-teal)) !important;
+    }
+    
+    .btn-control-rotation {
+      background: linear-gradient(135deg, var(--accent-pink), #d53f8c) !important;
+      border: none;
+      border-radius: 0.8rem;
+      color: white !important;
+      transition: all 0.3s ease;
+      box-shadow: 0 3px 10px rgba(237, 100, 166, 0.3);
+      font-size: 0.85rem;
+    }
+    
+    .btn-control-rotation:hover {
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 5px 15px rgba(237, 100, 166, 0.4);
+      background: linear-gradient(135deg, #d53f8c, var(--accent-pink)) !important;
+    }
+    
+    .btn-control-danger {
+      background: linear-gradient(135deg, var(--warning-amber), #ed8936) !important;
+      border: none;
+      border-radius: 0.8rem;
+      color: white !important;
+      transition: all 0.3s ease;
+      box-shadow: 0 3px 10px rgba(246, 173, 85, 0.3);
+      font-size: 0.9rem;
+    }
+    
+    .btn-control-danger:hover {
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 5px 15px rgba(246, 173, 85, 0.4);
+      background: linear-gradient(135deg, #ed8936, var(--warning-amber)) !important;
+    }
+    
+    .btn-control-primary:active,
+    .btn-control-directional:active,
+    .btn-control-rotation:active,
+    .btn-control-danger:active {
+      transform: translateY(-1px) scale(1.01);
+    }
+    
+    /* Iconos más pequeños para mejor proporción */
+    .btn i {
+      font-size: 1.2rem;
+    }
+    
+    .btn-control-primary i,
+    .btn-control-danger i {
+      font-size: 1.4rem;
+    }
+    
+    /* ESPACIADO UNIFORME MEJORADO */
+    .row.mb-3 {
+      margin-bottom: 1.5rem !important;
+    }
+    
+    .col-4.px-2 {
+      padding-left: 0.5rem !important;
+      padding-right: 0.5rem !important;
+    }
+    
+    /* Espaciado uniforme entre botones verticales */
+    .flex-column.gap-2 {
+      gap: 0.75rem !important;
+    }
+    
+    /* Asegurar que todos los botones tengan la misma altura base */
+    .btn-control-directional,
+    .btn-control-rotation {
+      min-height: 70px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .btn-control-primary,
+    .btn-control-danger {
+      min-height: 85px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    /* Responsive para móviles */
+    @media (max-width: 768px) {
+      .btn {
+        padding: 0.6rem 0.3rem !important;
+        font-size: 0.8rem;
+      }
+      
+      .btn i {
+        font-size: 1rem;
+      }
+      
+      .btn-control-primary i,
+      .btn-control-danger i {
+        font-size: 1.2rem;
+      }
+      
+      .btn-control-directional,
+      .btn-control-rotation {
+        min-height: 60px;
+      }
+      
+      .btn-control-primary,
+      .btn-control-danger {
+        min-height: 75px;
+      }
+      
+      .row.mb-3 {
+        margin-bottom: 1rem !important;
+      }
+      
+      .col-4.px-2 {
+        padding-left: 0.25rem !important;
+        padding-right: 0.25rem !important;
+      }
+      
+      .flex-column.gap-2 {
+        gap: 0.5rem !important;
+      }
     }
   </style>
 
