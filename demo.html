@@ -8,19 +8,39 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
   <link rel="stylesheet" href="css/styles.css" />
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="imagenes/carreras.png">
 </head>
 <body class="bg-dark text-white">
 
-  <!-- Navbar Mejorada (ORIGINAL) -->
+  <!-- Navbar Principal -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-gradient-primary shadow-lg sticky-top">
     <div class="container">
       <a class="navbar-brand fw-bold d-flex align-items-center" href="index.html">
         <i class="bi bi-arrow-left me-2"></i>
+        <img src="imagenes/carreras.png" alt="IoT Car" width="30" height="30" class="me-2">
         IoT Car
       </a>
       <span class="navbar-text fw-bold">
         Secuencias Automáticas
       </span>
+    </div>
+  </nav>
+
+  <!-- Barra de Navegación entre Páginas -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-secondary">
+    <div class="container">
+      <div class="navbar-nav w-100 justify-content-center">
+        <a class="nav-link fw-bold mx-3" href="control.html">
+          <i class="bi bi-joystick me-1"></i>Control
+        </a>
+        <a class="nav-link active fw-bold mx-3" href="demo.html">
+          <i class="bi bi-play-circle me-1"></i>Secuencias
+        </a>
+        <a class="nav-link fw-bold mx-3" href="monitor.html">
+          <i class="bi bi-graph-up me-1"></i>Monitoreo
+        </a>
+      </div>
     </div>
   </nav>
 

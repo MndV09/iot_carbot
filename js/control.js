@@ -21,7 +21,10 @@ const btnAddObstacle = $("#btnAddObstacle");
 
 // ----- Config básica -----
 const DEVICE_ID = Number(localStorage.getItem("DEVICE_ID") || "1");
-const SOURCE    = "manual";
+
+// Valor que se mandará en el campo `source`
+// Por defecto usamos velocidad MEDIA (215)
+let currentSource = "215";
 
 // ----- Helpers de UI -----
 function setCurrentMoveText(moveId, eventAt) {
@@ -43,7 +46,7 @@ function setLastObstacleText(o) {
   lastObstacleEl.textContent = `(${ts}) ${id} • ${name}${dist}`;
 }
 
-// ----- Wire up botones fijos -----
+// ----- Wire up botones fijos de movimiento -----
 function wireMovementButtons() {
   const buttons = $$('[data-move]');
   buttons.forEach(button => {
@@ -60,13 +63,46 @@ function wireMovementButtons() {
   });
 }
 
+// ----- NUEVO: Wire up botones de velocidad -----
+function wireSpeedButtons() {
+  const buttons = $$('[data-speed]');
+  if (!buttons.length) return;
+
+  buttons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const speed = button.getAttribute("data-speed");
+      if (!speed) return;
+
+      // Guardamos la velocidad seleccionada
+      currentSource = String(speed);
+
+      // Remover la selección previa
+      buttons.forEach((b) => b.classList.remove("active-speed"));
+
+      // Marcar botón seleccionado
+      button.classList.add("active-speed");
+
+      console.log("Velocidad seleccionada:", currentSource);
+    });
+  });
+
+  // ⚡ Selección inicial por defecto (Velocidad Media = 215)
+  const defaultBtn = document.querySelector('[data-speed="215"]');
+  if (defaultBtn) {
+    defaultBtn.classList.add("active-speed");
+    currentSource = "215";  // asegura consistencia
+  }
+}
+
+
 // ----- Requests -----
 async function sendMovement(statusClave) {
   try {
     const payload = {
       device_id: DEVICE_ID,
       status_clave: statusClave,
-      source: SOURCE,
+      // Aquí va la velocidad que elegiste: 175 / 215 / 255
+      source: currentSource,
       sequence_id: null
     };
     const res = await movement.add(payload);
@@ -167,8 +203,11 @@ function initSocket() {
 
 // ----- Eventos UI -----
 function wireUI() {
-  btnAddObstacle.addEventListener("click", sendRandomObstacle);
+  if (btnAddObstacle) {
+    btnAddObstacle.addEventListener("click", sendRandomObstacle);
+  }
   wireMovementButtons();
+  wireSpeedButtons(); // ← NUEVO
 }
 
 // ----- Init -----

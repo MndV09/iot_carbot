@@ -8,20 +8,40 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
   <link rel="stylesheet" href="css/styles.css">
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="imagenes/carreras.png">
 </head>
 
 <body class="bg-dark text-white">
 
-  <!-- Navbar Mejorada -->
+  <!-- Navbar Principal -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-gradient-primary shadow-lg sticky-top">
     <div class="container">
       <a class="navbar-brand fw-bold d-flex align-items-center" href="index.html">
         <i class="bi bi-arrow-left me-2"></i>
+        <img src="imagenes/carreras.png" alt="IoT Car" width="30" height="30" class="me-2">
         IoT Car
       </a>
       <span class="navbar-text fw-bold">
         Control Manual
       </span>
+    </div>
+  </nav>
+
+  <!-- Barra de Navegación entre Páginas -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-secondary">
+    <div class="container">
+      <div class="navbar-nav w-100 justify-content-center">
+        <a class="nav-link active fw-bold mx-3" href="control.html">
+          <i class="bi bi-joystick me-1"></i>Control
+        </a>
+        <a class="nav-link fw-bold mx-3" href="demo.html">
+          <i class="bi bi-play-circle me-1"></i>Secuencias
+        </a>
+        <a class="nav-link fw-bold mx-3" href="monitor.html">
+          <i class="bi bi-graph-up me-1"></i>Monitoreo
+        </a>
+      </div>
     </div>
   </nav>
 
@@ -41,6 +61,59 @@
     <!-- Panel de Control Tipo D-Pad -->
     <section class="mt-5">
       <h4 class="fw-bold mb-4 gradient-text text-center">PANEL DE CONTROL</h4>
+
+      <!-- NUEVO DISEÑO: Selector de velocidad mejorado -->
+      <div class="row justify-content-center mb-4">
+        <div class="col-lg-8">
+          <div class="card glass-card border-0 shadow-lg">
+            <div class="card-body">
+              <div class="text-center mb-3">
+                <h5 class="fw-bold gradient-text mb-3">
+                  <i class="bi bi-speedometer2 me-2"></i>VELOCIDAD ACTUAL
+                </h5>
+                <div id="currentSpeedDisplay" class="display-6 fw-bold text-warning">215</div>
+                <small class="text-white-50">Valor PWM (0-255)</small>
+              </div>
+              
+              <div class="d-flex flex-wrap justify-content-center align-items-center gap-3">
+                <!-- Botón Velocidad Baja -->
+                <button class="btn speed-btn speed-low" data-speed="175">
+                  <div class="speed-icon">
+                    <i class="bi bi-bar-chart"></i>
+                  </div>
+                  <div class="speed-info">
+                    <div class="speed-label">BAJA</div>
+                    <div class="speed-value">175</div>
+                  </div>
+                </button>
+
+                <!-- Botón Velocidad Media -->
+                <button class="btn speed-btn speed-medium active-speed" data-speed="215">
+                  <div class="speed-icon">
+                    <i class="bi bi-speedometer"></i>
+                  </div>
+                  <div class="speed-info">
+                    <div class="speed-label">MEDIA</div>
+                    <div class="speed-value">215</div>
+                  </div>
+                </button>
+
+                <!-- Botón Velocidad Alta -->
+                <button class="btn speed-btn speed-high" data-speed="255">
+                  <div class="speed-icon">
+                    <i class="bi bi-lightning-charge"></i>
+                  </div>
+                  <div class="speed-info">
+                    <div class="speed-label">ALTA</div>
+                    <div class="speed-value">255</div>
+                  </div>
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
       
       <div class="row justify-content-center">
         <div class="col-lg-8">
@@ -378,6 +451,18 @@
       align-items: center;
     }
     
+        /* ... todo lo que ya tienes arriba ... */
+
+    /* Botón de velocidad seleccionado - SIEMPRE visible */
+    .speed-btn.active-speed {
+      background-color: rgba(255,255,255,0.9) !important;
+      color: #000 !important;
+      font-weight: bold;
+      border-color: #ffffff !important;
+      box-shadow: 0 0 12px rgba(255,255,255,0.7);
+      transform: translateY(-1px);
+    }
+
     /* Responsive para móviles */
     @media (max-width: 768px) {
       .btn {
@@ -417,6 +502,91 @@
         gap: 0.5rem !important;
       }
     }
+.speed-btn {
+      background: rgba(255, 255, 255, 0.1) !important;
+      border: 2px solid rgba(255, 255, 255, 0.2) !important;
+      border-radius: 1rem !important;
+      padding: 1rem 1.5rem !important;
+      color: white !important;
+      transition: all 0.3s ease;
+      min-width: 120px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .speed-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      border-color: rgba(255, 255, 255, 0.4) !important;
+    }
+    
+    /* Estados activos para cada velocidad */
+    .speed-low.active-speed {
+      background: linear-gradient(135deg, #4fd1c5, #38b2ac) !important;
+      border-color: #4fd1c5 !important;
+      box-shadow: 0 0 20px rgba(79, 209, 197, 0.4);
+    }
+    
+    .speed-medium.active-speed {
+      background: linear-gradient(135deg, #f6ad55, #ed8936) !important;
+      border-color: #f6ad55 !important;
+      box-shadow: 0 0 20px rgba(246, 173, 85, 0.4);
+    }
+    
+    .speed-high.active-speed {
+      background: linear-gradient(135deg, #fc8181, #f56565) !important;
+      border-color: #fc8181 !important;
+      box-shadow: 0 0 20px rgba(252, 129, 129, 0.4);
+    }
+    
+    /* Iconos de velocidad */
+    .speed-icon {
+      font-size: 1.5rem;
+      margin-bottom: 0.25rem;
+    }
+    
+    .speed-info {
+      text-align: center;
+    }
+    
+    .speed-label {
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-bottom: 0.1rem;
+    }
+    
+    .speed-value {
+      font-size: 0.8rem;
+      opacity: 0.9;
+      font-family: 'Monaco', 'Consolas', monospace;
+    }
+    
+    /* Barra de velocidad visual */
+    .speed-bar-container {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 1rem;
+      padding: 1rem;
+    }
+    
+    .speed-bar {
+      background: rgba(255, 255, 255, 0.2);
+      height: 8px;
+      border-radius: 4px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .speed-indicator {
+      position: absolute;
+      height: 100%;
+      background: linear-gradient(90deg, #4fd1c5, #f6ad55, #fc8181);
+      border-radius: 4px;
+      transition: width 0.5s ease;
+      width: 50%; /* Valor por defecto para media */
+    }
+    
   </style>
 
 </body>

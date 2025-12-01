@@ -308,3 +308,31 @@ body {
   font-weight: 700;
   margin-bottom: 1rem;
 }
+/* Estilos para la barra de navegación secundaria */
+.navbar-nav .nav-link {
+  color: rgba(255, 255, 255, 0.7) !important;
+  transition: all 0.3s ease;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+}
+
+.navbar-nav .nav-link:hover {
+  color: rgba(255, 255, 255, 0.9) !important;
+  background: rgba(102, 126, 234, 0.1);
+  transform: translateY(-1px);
+}
+
+.navbar-nav .nav-link.active {
+  color: #ffffff !important;
+  background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple)) !important;
+  box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+  .navbar-nav .nav-link {
+    margin: 0.25rem !important;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
+}
