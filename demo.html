@@ -2,337 +2,194 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <title>Secuencias Automáticas - IoT Car</title>
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
   <link rel="stylesheet" href="css/styles.css" />
-  <!-- Favicon -->
   <link rel="icon" type="image/png" href="imagenes/carreras.png">
 </head>
 <body class="bg-dark text-white">
 
-  <!-- Navbar Principal -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-gradient-primary shadow-lg sticky-top">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-gradient-primary shadow-lg">
     <div class="container">
       <a class="navbar-brand fw-bold d-flex align-items-center" href="index.html">
         <i class="bi bi-arrow-left me-2"></i>
         <img src="imagenes/carreras.png" alt="IoT Car" width="30" height="30" class="me-2">
-        IoT Car
+        <span class="d-none d-sm-inline">IoT Car</span>
       </a>
-      <span class="navbar-text fw-bold">
-        Secuencias Automáticas
-      </span>
-    </div>
-  </nav>
-
-  <!-- Barra de Navegación entre Páginas -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-secondary">
-    <div class="container">
-      <div class="navbar-nav w-100 justify-content-center">
-        <a class="nav-link fw-bold mx-3" href="control.html">
-          <i class="bi bi-joystick me-1"></i>Control
-        </a>
-        <a class="nav-link active fw-bold mx-3" href="demo.html">
-          <i class="bi bi-play-circle me-1"></i>Secuencias
-        </a>
-        <a class="nav-link fw-bold mx-3" href="monitor.html">
-          <i class="bi bi-graph-up me-1"></i>Monitoreo
-        </a>
+      <span class="navbar-text fw-bold d-none d-lg-block">Secuencias Automáticas</span>
+      
+      <div class="navbar-nav ms-auto">
+        <a class="nav-link fw-bold mx-2" href="control.html"><i class="bi bi-joystick me-1"></i>Control</a>
+        <a class="nav-link active fw-bold mx-2" href="demo.html"><i class="bi bi-play-circle me-1"></i>Secuencias</a>
+        <a class="nav-link fw-bold mx-2" href="monitor.html"><i class="bi bi-graph-up me-1"></i>Monitor</a>
       </div>
     </div>
   </nav>
 
-  <main class="container py-5">
-
-    <div class="row g-4">
-      <!-- Panel Superior: Constructor de Pasos -->
-      <div class="col-12">
-        <div class="card glass-card border-0 shadow-lg">
-          <div class="card-body">
-            <h4 class="fw-bold mb-4 gradient-text">
+  <main class="container py-3 d-flex flex-column justify-content-center h-100">
+    
+    <div class="row g-3 w-100" style="flex: 1; max-height: 850px;">
+      
+      <div class="col-lg-5 h-100 d-flex flex-column">
+        <div class="card glass-card border-0 shadow-lg h-100">
+          <div class="card-body d-flex flex-column p-3">
+            
+            <h4 class="fw-bold mb-3 gradient-text flex-shrink-0">
               <i class="bi bi-puzzle me-2"></i>Constructor de Pasos
             </h4>
 
-            <div class="row g-3 align-items-end">
-              <div class="col-md-4">
-                <label class="form-label text-white">Movimiento (catálogo)</label>
-                <select id="selMove" class="form-select">
-                  <option disabled selected value="">Seleccione movimiento…</option>
-                  <!-- demo.js llenará según MOVES -->
+            <div class="row g-2 align-items-end mb-3 flex-shrink-0">
+              <div class="col-7">
+                <label class="form-label text-white small mb-1">Movimiento</label>
+                <select id="selMove" class="form-select form-select-sm">
+                  <option disabled selected value="">Seleccione...</option>
                 </select>
               </div>
-
-              <div class="col-md-2">
-                <label class="form-label text-white">Duración (ms)</label>
-                <input id="inpDuration" type="number" class="form-control" min="100" step="100" placeholder="800" />
-              </div>
-
-              <div class="col-md-3 d-grid">
-                <button id="btnAddStep" class="btn btn-success fw-bold py-2">
-                  <i class="bi bi-plus-circle me-1"></i>Agregar Paso
-                </button>
-              </div>
-
-              <div class="col-md-3 d-flex gap-2">
-                <button id="btnLoadExample" class="btn btn-outline-light btn-sm flex-fill">
-                  <i class="bi bi-cloud-download me-1"></i>Ejemplo
-                </button>
-                <button id="btnClearSteps" class="btn btn-outline-danger btn-sm flex-fill">
-                  <i class="bi bi-trash me-1"></i>Limpiar
-                </button>
+              <div class="col-5">
+                <label class="form-label text-white small mb-1">Duración (ms)</label>
+                <input id="inpDuration" type="number" class="form-control form-control-sm" min="100" step="100" placeholder="800" />
               </div>
             </div>
 
-            <div class="mt-2">
-              <small class="text-white-50">
-                Catálogo: (1) Adelante · (2) Atrás · (3) Detener · (4) V. adelante derecha · (5) V. adelante izquierda · (6) V. atrás derecha · (7) V. atrás izquierda · (8) 90° der · (9) 90° izq · (10) 360° der · (11) 360° izq
-              </small>
+            <div class="d-flex gap-2 mb-3 flex-shrink-0">
+              <button id="btnAddStep" class="btn btn-success btn-sm fw-bold flex-fill">
+                <i class="bi bi-plus-circle me-1"></i>Agregar
+              </button>
+              <button id="btnLoadExample" class="btn btn-outline-light btn-sm flex-fill">
+                <i class="bi bi-cloud-download me-1"></i>Ejemplo
+              </button>
+              <button id="btnClearSteps" class="btn btn-outline-danger btn-sm flex-fill">
+                <i class="bi bi-trash me-1"></i>Limpiar
+              </button>
             </div>
 
-            <div class="table-responsive mt-3">
+            <div class="table-responsive flex-grow-1 border rounded border-secondary bg-black bg-opacity-25" style="overflow-y: auto;">
               <table class="table table-dark table-striped table-sm align-middle mb-0">
-                <thead>
+                <thead style="position: sticky; top: 0; z-index: 10;">
                   <tr>
-                    <th style="width:70px">#</th>
+                    <th style="width:40px;">#</th>
                     <th>Movimiento</th>
-                    <th style="width:140px">Duración (ms)</th>
-                    <th style="width:190px">Acciones</th>
+                    <th style="width:90px">Duración</th>
+                    <th style="width:50px"></th>
                   </tr>
                 </thead>
                 <tbody id="tblSteps">
-                  <!-- demo.js renderiza filas {step_no, status_clave, name, duration_ms} -->
-                </tbody>
+                  </tbody>
               </table>
             </div>
+
           </div>
         </div>
       </div>
 
-      <!-- Panel Inferior Izquierdo: Crear Secuencia -->
-      <div class="col-lg-6">
-        <div class="card glass-card border-0 shadow-lg h-100">
-          <div class="card-body">
-            <h4 class="fw-bold mb-4 gradient-text">
-              <i class="bi bi-plus-square me-2"></i>Crear Secuencia
-            </h4>
-
-            <div class="mb-3">
-              <label class="form-label text-white">Nombre de la secuencia</label>
-              <input id="inpDemoName" type="text" class="form-control" placeholder="DEMO_Cuadrado" />
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label text-white">Owner Device ID</label>
-              <input id="inpOwnerDevice" type="number" class="form-control" min="1" value="1" />
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label text-white">Pasos (JSON generado)</label>
-              <textarea id="taStepsJson" class="form-control" rows="5" readonly placeholder="[ ... ]"></textarea>
-              <small class="text-white-50">Se genera automáticamente con los pasos del constructor.</small>
-            </div>
-
-            <div class="d-grid">
-              <button id="btnCreateDemo" class="btn btn-success fw-bold py-2">
-                <i class="bi bi-check-lg me-1"></i>Crear Secuencia DEMO
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Panel Inferior Derecho: Ejecutar + Log -->
-      <div class="col-lg-6">
-        <!-- Ejecutar DEMO -->
-        <div class="card glass-card border-0 shadow-lg mb-4">
-          <div class="card-body">
-            <h4 class="fw-bold mb-4 gradient-text">
-              <i class="bi bi-play-circle me-2"></i>Ejecutar Secuencia
-            </h4>
-
-            <div class="d-flex gap-2 mb-3">
-              <button id="btnRefreshDemos" class="btn btn-outline-light btn-sm">
-                <i class="bi bi-arrow-clockwise me-1"></i>Actualizar Lista
-              </button>
-              <span class="small text-white-50 align-self-center">Consulta últimas 20</span>
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label text-white">Secuencia disponible</label>
-              <select id="selDemo" class="form-select">
-                <option disabled selected value="">Seleccione DEMO…</option>
-                <!-- demo.js llenará con /api/demo/last20 -->
-              </select>
-            </div>
-
-            <div class="row g-2">
-              <div class="col-6">
-                <label class="form-label text-white">Device ID</label>
-                <input id="inpRunDevice" type="number" class="form-control" min="1" value="1" />
-              </div>
-              <div class="col-6">
-                <label class="form-label text-white">Delay (ms)</label>
-                <input id="inpRunDelay" type="number" class="form-control" min="0" value="0" />
+      <div class="col-lg-7 h-100 d-flex flex-column">
+        <div class="row h-100 g-3">
+          
+          <div class="col-md-6 h-100 d-flex flex-column">
+            <div class="card glass-card border-0 shadow-lg h-100">
+              <div class="card-body d-flex flex-column p-3">
+                <h4 class="fw-bold mb-3 gradient-text flex-shrink-0">
+                  <i class="bi bi-plus-square me-2"></i>Nueva Secuencia
+                </h4>
+                
+                <div class="mb-2">
+                  <label class="form-label text-white small mb-1">Nombre</label>
+                  <input id="inpDemoName" type="text" class="form-control form-control-sm" placeholder="DEMO_X" />
+                </div>
+                
+                <div class="mb-2">
+                  <label class="form-label text-white small mb-1">Owner ID</label>
+                  <input id="inpOwnerDevice" type="number" class="form-control form-control-sm" min="1" value="1" />
+                </div>
+                
+                <div class="mb-2 flex-grow-1 d-flex flex-column">
+                  <label class="form-label text-white small mb-1">JSON Generado</label>
+                  <textarea id="taStepsJson" class="form-control form-control-sm flex-grow-1" style="resize: none;" readonly placeholder="[ ... ]"></textarea>
+                </div>
+                
+                <div class="mt-auto pt-2">
+                  <button id="btnCreateDemo" class="btn btn-success btn-sm fw-bold w-100 py-2">
+                    <i class="bi bi-check-lg me-1"></i>Crear DEMO
+                  </button>
+                </div>
               </div>
             </div>
+          </div>
 
-            <div class="d-grid mt-3">
-              <button id="btnRunDemo" class="btn btn-primary fw-bold py-2">
-                <i class="bi bi-rocket me-1"></i>Ejecutar Seleccionada
-              </button>
+          <div class="col-md-6 h-100 d-flex flex-column">
+            <div class="card glass-card border-0 shadow-lg h-100">
+              <div class="card-body d-flex flex-column p-3">
+                <h4 class="fw-bold mb-3 gradient-text flex-shrink-0">
+                  <i class="bi bi-rocket me-2"></i>Ejecutar
+                </h4>
+
+                <div class="d-flex gap-2 mb-2 align-items-center">
+                  <button id="btnRefreshDemos" class="btn btn-outline-light btn-sm">
+                    <i class="bi bi-arrow-clockwise"></i>
+                  </button>
+                  <select id="selDemo" class="form-select form-select-sm flex-grow-1">
+                    <option disabled selected value="">Seleccione DEMO...</option>
+                  </select>
+                </div>
+
+                <div class="row g-2 mb-3">
+                  <div class="col-6">
+                    <label class="small text-white-50">Device ID</label>
+                    <input id="inpRunDevice" type="number" class="form-control form-control-sm" value="1" />
+                  </div>
+                  <div class="col-6">
+                    <label class="small text-white-50">Delay (ms)</label>
+                    <input id="inpRunDelay" type="number" class="form-control form-control-sm" value="0" />
+                  </div>
+                </div>
+
+                <button id="btnRunDemo" class="btn btn-primary btn-sm fw-bold w-100 mb-3 py-2">
+                  <i class="bi bi-play-fill me-1"></i>EJECUTAR AHORA
+                </button>
+
+                <div class="d-flex flex-column flex-grow-1 min-h-0">
+                  <h5 class="fw-bold mb-1 gradient-text small">
+                    <i class="bi bi-terminal me-2"></i>Log de Eventos
+                  </h5>
+                  <div id="demoLog" class="log-container flex-grow-1" style="overflow-y: auto;">
+                    </div>
+                </div>
+
+              </div>
             </div>
           </div>
-        </div>
 
-        <!-- Log de Eventos -->
-        <div class="card glass-card border-0 shadow-lg">
-          <div class="card-body">
-            <h5 class="fw-bold mb-3 gradient-text">
-              <i class="bi bi-broadcast me-2"></i>Eventos en Vivo
-            </h5>
-            <div id="demoLog" class="log-container"></div>
-          </div>
         </div>
       </div>
     </div>
-
   </main>
 
-  <!-- Footer Unificado -->
-  <footer class="bg-dark border-top border-secondary mt-5 py-4">
-    <div class="container text-center">
-      <p class="text-secondary mb-0">
-        <i class="bi bi-cpu me-1"></i>Amanda Cabrales Vega
-      </p>
+ <footer class="bg-dark border-top border-secondary py-2">
+    <div class="container">
+      <div class="text-center">
+        <p class="mb-0 small text-white-50">
+          <i class="bi bi-cpu me-1"></i>Desarrollado por: 
+          <span class="text-info">Amanda Cabrales Vega</span>
+        </p>
+      </div>
     </div>
   </footer>
 
-  <!-- Socket + Lógica -->
   <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
-  <!-- demo.html -->
-<script type="module">
-  import { demo } from "./js/api.js";
-
-  async function refreshDemos() {
-    const owner = 1; // o toma del input
-    const res = await demo.last20(owner);
-    console.log("demos:", res);
-  }
-
-  document.addEventListener("DOMContentLoaded", refreshDemos);
-</script>
-
-    <!-- Socket.IO -->
-  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
-
-  <!-- Carga el módulo que SÍ renderiza los selects -->
+  <script type="module">
+    import { demo } from "./js/api.js";
+    async function refreshDemos() {
+      try {
+          const owner = document.getElementById('inpOwnerDevice')?.value || 1;
+      } catch(e) {}
+    }
+    document.addEventListener("DOMContentLoaded", refreshDemos);
+  </script>
   <script type="module" src="./js/demo.js"></script>
-
-  <!-- Bootstrap -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-
-  <style>
-    /* ESTILOS ESPECÍFICOS PARA DEMO.HTML */
-    
-    /* Tarjeta de estado mejorada - IGUAL QUE CONTROL.HTML */
-    .status-card {
-      background: linear-gradient(135deg, rgba(30, 58, 138, 0.8), rgba(55, 48, 163, 0.8)) !important;
-      backdrop-filter: blur(10px);
-      border-radius: 1.5rem;
-      border: 1px solid rgba(255,255,255,0.1);
-    }
-    
-    /* Texto del estado actual con efecto de sombra */
-    #currentAction {
-      text-shadow: 0 0 20px rgba(245, 158, 11, 0.6);
-      font-weight: 700;
-    }
-    
-    /* Mejora de textos secundarios */
-    .text-white-50 {
-      color: rgba(255, 255, 255, 0.8) !important;
-    }
-    
-    /* Contenedor principal */
-    main {
-      background: radial-gradient(circle at top right, rgba(30, 58, 138, 0.1), transparent 50%),
-                  radial-gradient(circle at bottom left, rgba(32, 201, 151, 0.1), transparent 50%);
-      min-height: calc(100vh - 200px);
-    }
-    
-    /* Botones mejorados */
-    .btn {
-      border-radius: 0.8rem;
-      transition: all 0.3s ease;
-      font-weight: 600;
-    }
-    
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    }
-    
-    /* Tablas mejoradas */
-    .table-dark {
-      background: transparent;
-      border-radius: 0.75rem;
-      overflow: hidden;
-    }
-    
-    .table-dark.table-striped > tbody > tr:nth-of-type(odd) {
-      background-color: rgba(255, 255, 255, 0.05) !important;
-    }
-    
-    .table-dark.table-striped > tbody > tr:hover {
-      background-color: rgba(102, 126, 234, 0.1) !important;
-    }
-    
-    /* Log container mejorado - TEXTO BLANCO */
-    .log-container {
-      background: rgba(15, 23, 42, 0.8);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 0.75rem;
-      padding: 1rem;
-      height: 180px;
-      overflow-y: auto;
-      font-family: 'Monaco', 'Consolas', monospace;
-      font-size: 0.85rem;
-      color: #ffffff !important;
-    }
-    
-    /* Asegurar que todo el texto dentro del log sea blanco */
-    .log-container * {
-      color: #ffffff !important;
-    }
-    
-    /* Estilos específicos para las filas del log */
-    .log-row {
-      color: #ffffff !important;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 0.5rem 0;
-    }
-    
-    .log-time {
-      color: #667eea !important;
-      font-weight: 600;
-    }
-    
-    /* Asegurar que los mensajes del log sean visibles */
-    #demoLog {
-      color: #ffffff !important;
-    }
-    
-    #demoLog div {
-      color: #ffffff !important;
-    }
-
-    /* Alturas fijas para mejor distribución */
-    .card {
-      min-height: auto;
-    }
-  </style>
 </body>
 </html>

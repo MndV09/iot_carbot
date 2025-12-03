@@ -18,7 +18,7 @@ const liveObsTime  = $("#liveObsTime");
 const tblMoveLog   = $("#tblMoveLog");
 const tblObsLog    = $("#tblObsLog");
 
-// Buffers locales (máx 10)
+// Buffers locales (máx 8)
 let mvLog = []; // movement events
 let obLog = []; // obstacle events
 
@@ -27,28 +27,37 @@ function formatTS(ts) {
   if (!ts) return "...";
   return String(ts).replace("T", " ").slice(0, 19);
 }
+
 function labelMove(ev) {
   const id = Number(ev?.status_clave ?? ev?.move_clave ?? ev?.id);
   return MOVES_MAP[id]?.name ?? `#${id}`;
 }
+
 function labelObstacle(ev) {
   const id = Number(ev?.status_clave ?? ev?.obstacle_clave ?? ev?.id);
   return OBSTACLES_MAP[id]?.name ?? `#${id}`;
 }
+
 function renderTable(target, list, labelFn) {
   if (!target) return;
   target.innerHTML = "";
+  
   list.forEach((row, i) => {
+    // Usamos event_id o id según tu base de datos
+    const realId = row.event_id || row.id || "ID?";
+
     const tr = document.createElement("tr");
     tr.innerHTML = `
-      <td>${i + 1}</td>
+      <td>${realId}</td>
       <td>${labelFn(row)}</td>
       <td>${formatTS(row?.event_at)}</td>
     `;
     target.appendChild(tr);
   });
 }
-function pushEvent(buffer, ev, max = 10) {
+
+// CAMBIO 1: El valor por defecto ahora es 8 (aunque lo pasaremos explícito abajo)
+function pushEvent(buffer, ev, max = 7) {
   buffer.unshift(ev);
   if (buffer.length > max) buffer.length = max;
 }
@@ -56,7 +65,7 @@ function pushEvent(buffer, ev, max = 10) {
 /* ========== Carga inicial (una sola vez) ========== */
 async function loadInitialDataOnce() {
   try {
-    // Estado inicial por REST (solo una vez)
+    // Pedimos los últimos 10 a la API (porque el SP da 10), pero solo usaremos 8
     const [lastMv, mv10, lastOb, ob10] = await Promise.all([
       movement.last(DEVICE_ID), movement.last10(DEVICE_ID),
       obstacle.last(DEVICE_ID), obstacle.last10(DEVICE_ID)
@@ -67,7 +76,9 @@ async function loadInitialDataOnce() {
       liveMove.textContent = labelMove(mv);
       liveMoveTime.textContent = formatTS(mv?.event_at);
     }
-    mvLog = (mv10?.data || []);
+    
+    // CAMBIO 2: Cortamos el array inicial a solo 8 elementos
+    mvLog = (mv10?.data || []).slice(0, 7); 
     renderTable(tblMoveLog, mvLog, labelMove);
 
     const ob = lastOb?.data;
@@ -75,7 +86,9 @@ async function loadInitialDataOnce() {
       liveObs.textContent = labelObstacle(ob);
       liveObsTime.textContent = formatTS(ob?.event_at);
     }
-    obLog = (ob10?.data || []);
+    
+    // CAMBIO 3: Cortamos el array inicial a solo 8 elementos
+    obLog = (ob10?.data || []).slice(0, 7);
     renderTable(tblObsLog, obLog, labelObstacle);
 
   } catch (err) {
@@ -104,33 +117,34 @@ function initSocket() {
     appendLog("wsLog", "⚠️ Desconectado!", null);
   });
 
-  // 👉 Movimiento nuevo: actualizamos buffers y UI (sin REST)
   socket.on("movement:new", (d) => {
     appendLog("wsLog", "🟢 movement:new", d);
     try {
       liveMove.textContent = labelMove(d);
       liveMoveTime.textContent = formatTS(d?.event_at);
-      pushEvent(mvLog, d, 10);
+      
+      // CAMBIO 4: Limitamos el buffer a 8 al insertar nuevos
+      pushEvent(mvLog, d, 7); 
       renderTable(tblMoveLog, mvLog, labelMove);
     } catch (err) {
       console.warn("movement:new parse error:", err);
     }
   });
 
-  // 👉 Obstáculo nuevo: actualizamos buffers y UI (sin REST)
   socket.on("obstacle:new", (d) => {
     appendLog("wsLog", "🟡 obstacle:new", d);
     try {
       liveObs.textContent = labelObstacle(d);
       liveObsTime.textContent = formatTS(d?.event_at);
-      pushEvent(obLog, d, 10);
+      
+      // CAMBIO 5: Limitamos el buffer a 8 al insertar nuevos
+      pushEvent(obLog, d, 7);
       renderTable(tblObsLog, obLog, labelObstacle);
     } catch (err) {
       console.warn("obstacle:new parse error:", err);
     }
   });
 
-  // Logs de DEMO (opcional)
   socket.on("demo:run", (d) => {
     appendLog("wsLog", "🚀 demo:run", d);
   });
@@ -144,7 +158,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     wsStatus.textContent = "WS: ...";
     wsStatus.className = "badge bg-secondary";
   }
-  await loadInitialDataOnce(); // ← una sola vez
-  initSocket();                // ← a partir de aquí, SOLO push
+  await loadInitialDataOnce();
+  initSocket();
   showToast("Monitoreo activo ✅", "success");
 });
