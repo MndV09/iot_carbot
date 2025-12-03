@@ -1,10 +1,6 @@
-/* =====================================================
-   CATÁLOGOS DE MOVIMIENTOS Y OBSTÁCULOS (Front-End)
-   - Catálogos inmutables para render dinámico en UI
-   - Helpers para búsquedas y selección aleatoria
-===================================================== */
+/* Catálogos de Movimientos y Obstáculos */
 
-// --- Movimientos (status_clave) ---
+// --- Movimientos ---
 export const MOVES = [
   { id: 1,  name: "Adelante" },
   { id: 2,  name: "Atrás" },
@@ -19,7 +15,7 @@ export const MOVES = [
   { id: 11, name: "Giro 360° izquierda" }
 ];
 
-// --- Obstáculos (status_clave) ---
+// --- Obstáculos ---
 export const OBSTACLES = [
   { id: 1, name: "Adelante" },
   { id: 2, name: "Adelante-Izquierda" },
@@ -28,11 +24,11 @@ export const OBSTACLES = [
   { id: 5, name: "Retrocede" }
 ];
 
-// --- Mapas rápidos por id ---
+// --- Mapas para búsqueda rápida por ID ---
 export const MOVES_MAP = MOVES.reduce((acc, x) => (acc[x.id] = x, acc), {});
 export const OBSTACLES_MAP = OBSTACLES.reduce((acc, x) => (acc[x.id] = x, acc), {});
 
-// --- Helpers comunes ---
+// --- Helpers ---
 export const getMoveById = (id) => MOVES_MAP[id] || null;
 export const getObstacleById = (id) => OBSTACLES_MAP[id] || null;
 

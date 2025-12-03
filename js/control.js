@@ -1,17 +1,10 @@
-/* =====================================================
-   CONTROL DE MOVIMIENTOS Y OBSTÁCULOS (Front-End)
-   - Botones fijos de movimiento con diseño gamepad
-   - Botón para registrar obstáculo aleatorio
-   - Estado "en ejecución" y último obstáculo
-   - Push en tiempo real con Socket.IO
-===================================================== */
+/* Lógica del Control Remoto (Movimientos y Obstáculos) */
 
 import { MOVES, OBSTACLES, getMoveById, randomObstacle } from "./catalogs.js";
 import { movement, obstacle } from "./api.js";
 import { connectSocket } from "./sockets.js";
 import { getApiBase } from "./config.js";
 
-// ----- Elementos del DOM -----
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => document.querySelectorAll(sel);
 
@@ -19,14 +12,12 @@ const currentMoveEl  = $("#currentMove");
 const lastObstacleEl = $("#lastObstacle");
 const btnAddObstacle = $("#btnAddObstacle");
 
-// ----- Config básica -----
 const DEVICE_ID = Number(localStorage.getItem("DEVICE_ID") || "1");
 
-// Valor que se mandará en el campo `source`
-// Por defecto usamos velocidad MEDIA (215)
+// Velocidad actual (source). Por defecto MEDIA (215)
 let currentSource = "215";
 
-// ----- Helpers de UI -----
+// --- Helpers de UI ---
 function setCurrentMoveText(moveId, eventAt) {
   const move = getMoveById(moveId);
   const label = move ? `${move.id} • ${move.name}` : `#${moveId}`;
@@ -46,7 +37,7 @@ function setLastObstacleText(o) {
   lastObstacleEl.textContent = `(${ts}) ${id} • ${name}${dist}`;
 }
 
-// ----- Wire up botones fijos de movimiento -----
+// --- Event Listeners: Botones de Movimiento ---
 function wireMovementButtons() {
   const buttons = $$('[data-move]');
   buttons.forEach(button => {
@@ -54,16 +45,14 @@ function wireMovementButtons() {
       const moveId = parseInt(button.getAttribute('data-move'));
       await sendMovement(moveId);
       
-      // Efecto visual de feedback
+      // Feedback visual
       button.style.transform = 'translateY(-1px) scale(0.95)';
-      setTimeout(() => {
-        button.style.transform = '';
-      }, 150);
+      setTimeout(() => button.style.transform = '', 150);
     });
   });
 }
 
-// ----- NUEVO: Wire up botones de velocidad -----
+// --- Event Listeners: Selector de Velocidad ---
 function wireSpeedButtons() {
   const buttons = $$('[data-speed]');
   if (!buttons.length) return;
@@ -73,43 +62,37 @@ function wireSpeedButtons() {
       const speed = button.getAttribute("data-speed");
       if (!speed) return;
 
-      // Guardamos la velocidad seleccionada
       currentSource = String(speed);
 
-      // Remover la selección previa
+      // Actualizar clases visuales
       buttons.forEach((b) => b.classList.remove("active-speed"));
-
-      // Marcar botón seleccionado
       button.classList.add("active-speed");
 
       console.log("Velocidad seleccionada:", currentSource);
     });
   });
 
-  // ⚡ Selección inicial por defecto (Velocidad Media = 215)
+  // Selección inicial
   const defaultBtn = document.querySelector('[data-speed="215"]');
   if (defaultBtn) {
     defaultBtn.classList.add("active-speed");
-    currentSource = "215";  // asegura consistencia
+    currentSource = "215";
   }
 }
 
-
-// ----- Requests -----
+// --- Peticiones API ---
 async function sendMovement(statusClave) {
   try {
     const payload = {
       device_id: DEVICE_ID,
       status_clave: statusClave,
-      // Aquí va la velocidad que elegiste: 175 / 215 / 255
-      source: currentSource,
+      source: currentSource, // Velocidad seleccionada (175, 215, 255)
       sequence_id: null
     };
     const res = await movement.add(payload);
-    // Actualiza inmediatamente el estado "en ejecución"
-    const eventAt =
-      res?.data?.event_at ||
-      new Date().toISOString().slice(0, 19).replace("T", " ");
+    
+    // Actualización optimista de la UI
+    const eventAt = res?.data?.event_at || new Date().toISOString().slice(0, 19).replace("T", " ");
     setCurrentMoveText(statusClave, eventAt);
     console.log("POST /movement/add OK:", res);
   } catch (err) {
@@ -120,9 +103,10 @@ async function sendMovement(statusClave) {
 async function sendRandomObstacle() {
   try {
     const rnd = randomObstacle();
-    // números aleatorios simples para pruebas
-    const distance = Number((10 + Math.random() * 40).toFixed(2)); // 10–50 cm
-    const backMs   = 500 + Math.floor(Math.random() * 800);        // 500–1300 ms
+    // Simulación de datos de sensor
+    const distance = Number((10 + Math.random() * 40).toFixed(2)); 
+    const backMs   = 500 + Math.floor(Math.random() * 800);
+    
     const payload = {
       device_id: DEVICE_ID,
       status_clave: rnd.id,
@@ -132,7 +116,6 @@ async function sendRandomObstacle() {
     };
     const res = await obstacle.add(payload);
     console.log("POST /obstacle/add OK:", res);
-    // Refresca "último obstáculo"
     await loadLastObstacle();
   } catch (err) {
     console.error("POST /obstacle/add error:", err);
@@ -166,7 +149,7 @@ async function loadLastObstacle() {
   }
 }
 
-// ----- Socket.IO (Push) -----
+// --- WebSocket Listeners ---
 function initSocket() {
   const socket = connectSocket();
 
@@ -174,11 +157,8 @@ function initSocket() {
     console.log("✅ WS conectado:", socket.id, "→", getApiBase());
   });
 
-  socket.on("server_info", (d) => {
-    console.log("ℹ️ server_info", d);
-  });
+  socket.on("server_info", (d) => console.log("ℹ️ server_info", d));
 
-  // Cuando el servidor emite un nuevo movimiento, actualizamos el estado
   socket.on("movement:new", (d) => {
     try {
       const id = Number(d?.status_clave ?? d?.move_clave ?? d?.id);
@@ -189,7 +169,6 @@ function initSocket() {
     }
   });
 
-  // Cuando hay un nuevo obstáculo, lo mostramos
   socket.on("obstacle:new", (d) => {
     try {
       setLastObstacleText(d);
@@ -201,21 +180,18 @@ function initSocket() {
   return socket;
 }
 
-// ----- Eventos UI -----
+// --- Inicialización ---
 function wireUI() {
   if (btnAddObstacle) {
     btnAddObstacle.addEventListener("click", sendRandomObstacle);
   }
   wireMovementButtons();
-  wireSpeedButtons(); // ← NUEVO
+  wireSpeedButtons();
 }
 
-// ----- Init -----
 document.addEventListener("DOMContentLoaded", async () => {
   console.log("Control • API:", getApiBase(), "Device:", DEVICE_ID);
   wireUI();
   initSocket();
-
-  // Cargar estados iniciales
   await Promise.all([loadLastMove(), loadLastObstacle()]);
 });

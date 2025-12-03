@@ -1,6 +1,5 @@
-/* =====================================================
-   MONITOR EN VIVO — 100% WS (sin pulls en eventos)
-===================================================== */
+/* Monitor en Vivo (WS Only) */
+
 import { movement, obstacle } from "./api.js";
 import { connectSocket } from "./sockets.js";
 import { MOVES_MAP, OBSTACLES_MAP } from "./catalogs.js";
@@ -9,7 +8,7 @@ import { showToast, appendLog } from "./ui.js";
 const $ = (s) => document.querySelector(s);
 const DEVICE_ID = Number(new URLSearchParams(location.search).get("device_id") || 1);
 
-// UI
+// UI Refs
 const wsStatus     = $("#wsStatus");
 const liveMove     = $("#liveMove");
 const liveMoveTime = $("#liveMoveTime");
@@ -18,11 +17,11 @@ const liveObsTime  = $("#liveObsTime");
 const tblMoveLog   = $("#tblMoveLog");
 const tblObsLog    = $("#tblObsLog");
 
-// Buffers locales (máx 8)
-let mvLog = []; // movement events
-let obLog = []; // obstacle events
+// Buffers locales para historial
+let mvLog = []; 
+let obLog = []; 
 
-/* ========== Helpers ========== */
+// --- Helpers ---
 function formatTS(ts) {
   if (!ts) return "...";
   return String(ts).replace("T", " ").slice(0, 19);
@@ -42,10 +41,8 @@ function renderTable(target, list, labelFn) {
   if (!target) return;
   target.innerHTML = "";
   
-  list.forEach((row, i) => {
-    // Usamos event_id o id según tu base de datos
+  list.forEach((row) => {
     const realId = row.event_id || row.id || "ID?";
-
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${realId}</td>
@@ -56,39 +53,37 @@ function renderTable(target, list, labelFn) {
   });
 }
 
-// CAMBIO 1: El valor por defecto ahora es 8 (aunque lo pasaremos explícito abajo)
-function pushEvent(buffer, ev, max = 7) {
+// Mantiene un buffer limitado (FIFO)
+function pushEvent(buffer, ev, max = 5) {
   buffer.unshift(ev);
-  if (buffer.length > max) buffer.length = max;
+  if (buffer.length > max) buffer.length = max; 
 }
 
-/* ========== Carga inicial (una sola vez) ========== */
+// --- Carga Inicial ---
 async function loadInitialDataOnce() {
   try {
-    // Pedimos los últimos 10 a la API (porque el SP da 10), pero solo usaremos 8
+    // Obtenemos los últimos 10, pero mostraremos solo 5 en tabla
     const [lastMv, mv10, lastOb, ob10] = await Promise.all([
       movement.last(DEVICE_ID), movement.last10(DEVICE_ID),
       obstacle.last(DEVICE_ID), obstacle.last10(DEVICE_ID)
     ]);
 
+    // Render Movimiento
     const mv = lastMv?.data;
     if (mv) {
       liveMove.textContent = labelMove(mv);
       liveMoveTime.textContent = formatTS(mv?.event_at);
     }
-    
-    // CAMBIO 2: Cortamos el array inicial a solo 8 elementos
-    mvLog = (mv10?.data || []).slice(0, 7); 
+    mvLog = (mv10?.data || []).slice(0, 5); 
     renderTable(tblMoveLog, mvLog, labelMove);
 
+    // Render Obstáculo
     const ob = lastOb?.data;
     if (ob) {
       liveObs.textContent = labelObstacle(ob);
       liveObsTime.textContent = formatTS(ob?.event_at);
     }
-    
-    // CAMBIO 3: Cortamos el array inicial a solo 8 elementos
-    obLog = (ob10?.data || []).slice(0, 7);
+    obLog = (ob10?.data || []).slice(0, 5);
     renderTable(tblObsLog, obLog, labelObstacle);
 
   } catch (err) {
@@ -97,7 +92,7 @@ async function loadInitialDataOnce() {
   }
 }
 
-/* ========== WebSocket (solo push) ========== */
+// --- WebSocket Listeners ---
 function initSocket() {
   const socket = connectSocket();
 
@@ -123,8 +118,7 @@ function initSocket() {
       liveMove.textContent = labelMove(d);
       liveMoveTime.textContent = formatTS(d?.event_at);
       
-      // CAMBIO 4: Limitamos el buffer a 8 al insertar nuevos
-      pushEvent(mvLog, d, 7); 
+      pushEvent(mvLog, d, 5); 
       renderTable(tblMoveLog, mvLog, labelMove);
     } catch (err) {
       console.warn("movement:new parse error:", err);
@@ -137,22 +131,18 @@ function initSocket() {
       liveObs.textContent = labelObstacle(d);
       liveObsTime.textContent = formatTS(d?.event_at);
       
-      // CAMBIO 5: Limitamos el buffer a 8 al insertar nuevos
-      pushEvent(obLog, d, 7);
+      pushEvent(obLog, d, 5);
       renderTable(tblObsLog, obLog, labelObstacle);
     } catch (err) {
       console.warn("obstacle:new parse error:", err);
     }
   });
 
-  socket.on("demo:run", (d) => {
-    appendLog("wsLog", "🚀 demo:run", d);
-  });
+  socket.on("demo:run", (d) => appendLog("wsLog", "🚀 demo:run", d));
 
   return socket;
 }
 
-/* ========== INIT ========== */
 document.addEventListener("DOMContentLoaded", async () => {
   if (wsStatus) {
     wsStatus.textContent = "WS: ...";

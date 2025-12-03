@@ -1,11 +1,4 @@
-/* =====================================================
-   DEMO AUTOMÁTICA — Producción (sin diagnósticos)
-   - Catálogo de movimientos (local)
-   - Crear DEMO (POST /api/demo/create)
-   - Listar últimas 20 (GET /api/demo/last20)
-   - Ejecutar DEMO (POST /api/demo/run)
-   - WS push: demo:new, demo:run
-===================================================== */
+/* Gestión de Demos (Secuencias Automáticas) */
 
 import { MOVES, MOVES_MAP } from "./catalogs.js";
 import { demo } from "./api.js";
@@ -14,7 +7,7 @@ import { showToast, appendLog } from "./ui.js";
 
 const $ = (sel) => document.querySelector(sel);
 
-// ------- DOM -------
+// Referencias DOM
 const selMove        = $("#selMove");
 const inpDuration    = $("#inpDuration");
 const btnAddStep     = $("#btnAddStep");
@@ -35,15 +28,15 @@ const btnRunDemo      = $("#btnRunDemo");
 
 const currentAction  = $("#currentAction");
 
-// Si quedó algún banner viejo de la versión diagnóstica, lo quitamos
+// Limpieza de UI antigua
 const _oldDiag = document.getElementById("diagBox");
 if (_oldDiag) _oldDiag.remove();
 
-// ------- Estado -------
-let steps = [];           // {status_clave, duration_ms}
-let demosCache = [];      // cache local /last20
+// Estado local
+let steps = [];           
+let demosCache = [];      
 
-// ------- Helpers -------
+// --- Renderizado de UI ---
 function renderMoveCatalog() {
   if (!selMove) return;
   selMove.innerHTML = `<option disabled selected value="">Seleccione movimiento…</option>`;
@@ -73,6 +66,7 @@ function renderStepsTable() {
     const tdAct = document.createElement("td");
     tdAct.className = "d-flex gap-1";
 
+    // Botones de acción (Subir, Bajar, Eliminar)
     const btnUp = document.createElement("button");
     btnUp.className = "btn btn-outline-light btn-sm";
     btnUp.textContent = "↑";
@@ -98,6 +92,7 @@ function renderStepsTable() {
   if (taStepsJson) taStepsJson.value = JSON.stringify(steps, null, 2);
 }
 
+// --- Manipulación de pasos ---
 function moveStep(idx, dir) {
   const j = idx + dir;
   if (j < 0 || j >= steps.length) return;
@@ -110,11 +105,6 @@ function deleteStep(idx) {
   renderStepsTable();
 }
 
-/* -------- Agregar Paso (FIX) --------
-   - Lee el movimiento seleccionado y duración
-   - Usa 800 ms por defecto si la duración no es válida
-   - Actualiza tabla + textarea JSON
-*/
 function addStepFromUI(e) {
   if (e) e.preventDefault();
 
@@ -127,8 +117,8 @@ function addStepFromUI(e) {
     return;
   }
 
+  // Duración por defecto segura si no es válida
   if (!Number.isFinite(duration) || duration < 100) {
-    // Duración por defecto segura
     duration = 800;
     if (inpDuration) inpDuration.value = String(duration);
   }
@@ -136,7 +126,6 @@ function addStepFromUI(e) {
   steps.push({ status_clave: moveId, duration_ms: duration });
   renderStepsTable();
 
-  // Limpieza ligera
   if (selMove) selMove.value = "";
   if (inpDuration) inpDuration.value = "";
   selMove?.focus();
@@ -162,7 +151,7 @@ function labelAction(d) {
   return `${name} ${ts ? `(${ts})` : ""}`;
 }
 
-// ------- DEMOS: cache + render select -------
+// --- Gestión de Demos (Carga y Selección) ---
 function renderDemosSelect() {
   if (!selDemo) return;
   selDemo.innerHTML = `<option disabled selected value="">Seleccione DEMO…</option>`;
@@ -185,7 +174,7 @@ async function refreshDemos() {
   }
 }
 
-// ------- REST mínimos -------
+// --- Creación y Ejecución ---
 async function createDemo() {
   let name = (inpDemoName?.value || "").trim();
   const ownerId = Number(inpOwnerDevice?.value || "1");
@@ -212,17 +201,18 @@ async function createDemo() {
     await refreshDemos();
   } catch (err) {
     console.error("createDemo error:", err);
-    showToast("Servidor respondió error; reintentando con nombre único…", "warning");
+    showToast("Error. Reintentando con nombre único…", "warning");
+    // Retry logic con timestamp
     try {
       const unique = `${name}_${Date.now()}`;
       if (inpDemoName) inpDemoName.value = unique;
       const res2 = await demo.create({ ...payload, name: unique });
-      showToast("DEMO creada con nombre único ✅", "success");
+      showToast("DEMO creada (retry) ✅", "success");
       appendLog("demoLog", "DEMO creada (retry)", res2?.data);
       await refreshDemos();
     } catch (err2) {
       console.error("createDemo retry error:", err2);
-      showToast("No se pudo crear la DEMO (ver consola)", "danger");
+      showToast("No se pudo crear la DEMO", "danger");
     }
   }
 }
@@ -230,8 +220,10 @@ async function createDemo() {
 async function runSelectedDemo() {
   const seq = Number(selDemo?.value);
   if (!seq) return showToast("Selecciona una DEMO", "warning");
+  
   const deviceId = Number(inpRunDevice?.value || "1");
   const delayMs  = Number(inpRunDelay?.value || "0");
+  
   try {
     const res = await demo.run({ sequence_id: seq, device_id: deviceId, start_delay_ms: delayMs });
     showToast("DEMO en ejecución 🚀", "success");
@@ -242,24 +234,23 @@ async function runSelectedDemo() {
   }
 }
 
-// ------- WebSocket (solo push) -------
+// --- WebSocket Listeners ---
 function initSocket() {
   const socket = connectSocket();
 
   socket.on("server_info", (d) => appendLog("demoLog", "server_info", d));
 
-  // Al crear DEMO por cualquier cliente, llega push y actualizamos el select
+  // Actualizar lista al recibir nueva demo
   socket.on("demo:new", (d) => {
     appendLog("demoLog", "🟣 demo:new", d);
     refreshDemos();
   });
 
-  // Al ejecutar DEMO, reflejamos acción actual
+  // Mostrar progreso al ejecutar demo
   socket.on("demo:run", (d) => {
     appendLog("demoLog", "🟡 demo:run", d);
     if (Array.isArray(d?.steps) && d.steps.length) {
-      const step = d.steps[0];
-      currentAction && (currentAction.textContent = labelAction(step));
+      currentAction && (currentAction.textContent = labelAction(d.steps[0]));
     } else if (d?.current_step) {
       currentAction && (currentAction.textContent = labelAction(d.current_step));
     } else if (d?.status_clave) {
@@ -272,7 +263,7 @@ function initSocket() {
   return socket;
 }
 
-// ------- Wire UI -------
+// --- Inicialización ---
 function wireUI() {
   btnAddStep   && btnAddStep.addEventListener("click", addStepFromUI);
   btnLoadExample && btnLoadExample.addEventListener("click", loadExampleSteps);
@@ -282,13 +273,11 @@ function wireUI() {
   btnRefreshDemos && btnRefreshDemos.addEventListener("click", refreshDemos);
   btnRunDemo && btnRunDemo.addEventListener("click", runSelectedDemo);
 
-  // Enter en duración agrega paso (si hay movimiento seleccionado)
   inpDuration && inpDuration.addEventListener("keydown", (e) => {
     if (e.key === "Enter") { e.preventDefault(); addStepFromUI(e); }
   });
 }
 
-// ------- Init -------
 document.addEventListener("DOMContentLoaded", async () => {
   renderMoveCatalog();
   wireUI();

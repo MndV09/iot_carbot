@@ -1,33 +1,22 @@
-/* =====================================================
-   UI HELPERS — IoT Carbot Front-End
-   - Toasters (Bootstrap)
-   - Render de estados simples
-   - Logs en consola y en paneles
-===================================================== */
-
-// Alias simple
+/* Helpers de UI */
 const $ = (sel) => document.querySelector(sel);
 
-/* -----------------------------
- ✅ Sistema de Notificaciones
---------------------------------*/
+// Sistema de notificaciones tipo "Toast"
 export function showToast(message, type = "info") {
   const colors = {
-    success: "#198754", // verde
-    info:    "#0dcaf0", // celeste
-    warning: "#ffc107", // amarillo
-    danger:  "#dc3545"  // rojo
+    success: "#198754", 
+    info:    "#0dcaf0", 
+    warning: "#ffc107", 
+    danger:  "#dc3545" 
   };
 
-  // Crear un contenedor si no existe
   let container = $("#toastContainer");
   if (!container) {
     container = document.createElement("div");
     container.id = "toastContainer";
-    container.style.position = "fixed";
-    container.style.top = "1rem";
-    container.style.right = "1rem";
-    container.style.zIndex = "9999";
+    Object.assign(container.style, {
+        position: "fixed", top: "1rem", right: "1rem", zIndex: "9999"
+    });
     document.body.appendChild(container);
   }
 
@@ -37,21 +26,16 @@ export function showToast(message, type = "info") {
   toast.textContent = message;
 
   container.appendChild(toast);
-
   setTimeout(() => toast.remove(), 3000);
 }
 
-/* -----------------------------
- ✅ Mostrar valores en DOM
---------------------------------*/
+// Actualiza texto en el DOM por ID
 export function setText(id, value) {
   const el = $(`#${id}`);
   if (el) el.textContent = value;
 }
 
-/* -----------------------------
- ✅ Logger visual opcional
---------------------------------*/
+// Agrega logs visuales tipo timeline
 export function appendLog(containerId, text, data = null) {
   const box = $(`#${containerId}`);
   if (!box) return;
@@ -64,12 +48,9 @@ export function appendLog(containerId, text, data = null) {
     row.textContent += " " + JSON.stringify(data);
   }
 
-  box.prepend(row); // se añade arriba como timeline
+  box.prepend(row); 
 }
 
-/* -----------------------------
- ✅ Loader pequeño (texto)
---------------------------------*/
 export function loadingText(id, text = "Cargando...") {
   setText(id, `⏳ ${text}`);
 }
@@ -78,9 +59,6 @@ export function clearLoadingText(id, fallback = "...") {
   setText(id, fallback);
 }
 
-/* -----------------------------
- ✅ Representación formateada de movimiento
---------------------------------*/
 export function movementLabel(mv) {
   const status = mv?.status_texto || mv?.status || mv?.name;
   const ts = mv?.event_at || mv?.created_at;

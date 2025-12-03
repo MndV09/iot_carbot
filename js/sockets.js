@@ -1,9 +1,4 @@
-/* =====================================================
-   SOCKET.IO — Conexión PUSH en tiempo real
-   - Se conecta al servidor API dinámico (API_BASE)
-   - Expone connectSocket() para usar en cada página
-===================================================== */
-
+/* Conexión Socket.IO (Push en tiempo real) */
 import { getApiBase } from "./config.js";
 
 let socket = null;
@@ -11,6 +6,7 @@ let socket = null;
 export function connectSocket() {
   const API_BASE = getApiBase();
 
+  // Reutiliza la conexión si ya existe y está activa
   if (socket && socket.connected) {
     console.log("ℹ️ Reutilizando socket existente:", socket.id);
     return socket;
@@ -18,7 +14,7 @@ export function connectSocket() {
 
   console.log("🔌 Conectando WS a:", API_BASE);
 
-  // SOLO WebSocket (sin polling)
+  // Configuración solo WebSocket (sin polling)
   socket = io(API_BASE, {
     transports: ["websocket"],
     reconnection: true,
@@ -26,7 +22,6 @@ export function connectSocket() {
     reconnectionDelay: 1000
   });
 
-  // Logs básicos
   socket.on("connect", () => console.log("✅ Socket conectado:", socket.id));
   socket.on("disconnect", (reason) => console.warn("⚠️ Socket desconectado:", reason));
   socket.on("connect_error", (err) => console.error("❌ Error WS:", err.message));

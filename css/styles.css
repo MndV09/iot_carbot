@@ -1,19 +1,20 @@
 /* =====================================================
-   IoT CARBOT — Estilos Originales (Layout Fix)
-   Diseño Visual: INTACTO
-   Estructura: 100% Alto, Sin Scroll Global
+   IoT CARBOT — Estilos Globales
 ===================================================== */
 
 :root {
+  /* Gradientes */
   --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
   --danger-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  
+  /* Fondos */
   --dark-bg: #0f172a;
   --darker-bg: #0a0f1c;
   --card-bg: rgba(30, 41, 59, 0.7);
   --glass-bg: rgba(255, 255, 255, 0.1);
   
-  /* Tus colores originales de botones */
+  /* Colores de componentes */
   --primary-blue: #667eea;
   --primary-purple: #764ba2;
   --accent-teal: #4fd1c5;
@@ -22,13 +23,13 @@
   --danger-coral: #fc8181;
 }
 
-/* --- ESTRUCTURA APP (El único cambio estructural) --- */
+/* --- Estructura Layout (App Fullscreen) --- */
 html, body {
-  height: 100dvh; /* Alto exacto de la pantalla */
+  height: 100dvh;
   width: 100vw;
   margin: 0;
   padding: 0;
-  overflow: hidden !important; /* Bloquea scroll de ventana */
+  overflow: hidden !important; /* Bloquea scroll global */
   background: var(--darker-bg) !important;
   color: #fff;
   font-family: 'Inter', 'Segoe UI', sans-serif;
@@ -36,18 +37,16 @@ html, body {
   flex-direction: column;
 }
 
-/* El navbar y footer no se encogen */
 nav.navbar, footer {
   flex-shrink: 0;
   z-index: 1000;
 }
 
-/* Main ocupa todo el espacio libre */
 main {
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow-y: auto; /* Scroll solo si el contenido interno lo necesita */
+  overflow-y: auto; /* Scroll interno */
   overflow-x: hidden;
   position: relative;
   width: 100%;
@@ -55,13 +54,11 @@ main {
   padding-bottom: 0.5rem;
 }
 
-/* Utilidad para que las filas ocupen el 100% */
 .h-100-responsive {
   height: 100%;
 }
 
-/* --- TUS ESTILOS VISUALES ORIGINALES (Intactos) --- */
-
+/* --- Estilos Visuales Generales --- */
 .gradient-text {
   background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
   -webkit-background-clip: text;
@@ -84,7 +81,30 @@ main {
   margin-bottom: 1rem !important;
 }
 
-/* --- Corrección Color Blanco Tarjetas Index --- */
+/* --- Tarjetas (Glassmorphism) --- */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.status-card {
+  background: linear-gradient(135deg, rgba(30, 58, 138, 0.8), rgba(55, 48, 163, 0.8)) !important;
+  backdrop-filter: blur(10px);
+  border-radius: 0.8rem;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.obstacle-card {
+  background: rgba(102, 126, 234, 0.1) !important;
+  backdrop-filter: blur(10px);
+  border-radius: 0.8rem;
+  border: 1px solid rgba(102, 126, 234, 0.3);
+}
+
+/* Tarjetas de Navegación (Index) */
 .navigation-card {
   background: var(--card-bg);
   backdrop-filter: blur(10px);
@@ -94,7 +114,7 @@ main {
   height: 100%;
   position: relative;
   overflow: hidden;
-  color: #ffffff !important; /* FORZAR BLANCO */
+  color: #ffffff !important;
 }
 
 .navigation-card h3 {
@@ -112,7 +132,6 @@ main {
   color: #ffffff !important;
   background: rgba(255, 255, 255, 0.1);
 }
-/* ------------------------------------------- */
 
 .navigation-card:hover {
   transform: translateY(-5px);
@@ -135,100 +154,54 @@ main {
   font-size: 2rem;
 }
 
-.glass-card {
-  background: var(--glass-bg);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 1rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+/* --- Botones de Control --- */
+.btn-control-primary,
+.btn-control-directional,
+.btn-control-rotation,
+.btn-control-danger {
+  border: none;
+  border-radius: 0.6rem;
+  color: white !important;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
 }
 
-/* === TUS BOTONES PERSONALIZADOS (Intactos) === */
-
-/* Botón Principal (Adelante/Atrás) */
 .btn-control-primary {
   background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple)) !important;
-  border: none;
-  border-radius: 0.6rem;
-  color: white !important;
-  transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
   font-size: 0.85rem;
-  /* Flex para centrar contenido verticalmente */
-  display: flex; 
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100%; /* Llenar celda */
 }
-.btn-control-primary:active { transform: scale(0.95); }
 
-/* Botones Diagonales */
 .btn-control-directional {
   background: linear-gradient(135deg, var(--accent-teal), #38b2ac) !important;
-  border: none;
-  border-radius: 0.6rem;
-  color: white !important;
-  transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(79, 209, 197, 0.3);
   font-size: 0.8rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
 }
-.btn-control-directional:active { transform: scale(0.95); }
 
-/* Botones Rotación */
 .btn-control-rotation {
   background: linear-gradient(135deg, var(--accent-pink), #d53f8c) !important;
-  border: none;
-  border-radius: 0.6rem;
-  color: white !important;
-  transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(237, 100, 166, 0.3);
   font-size: 0.8rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
 }
-.btn-control-rotation:active { transform: scale(0.95); }
 
-/* Botón Detener */
 .btn-control-danger {
   background: linear-gradient(135deg, var(--warning-amber), #ed8936) !important;
-  border: none;
-  border-radius: 0.6rem;
-  color: white !important;
-  transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(246, 173, 85, 0.3);
   font-size: 0.85rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-}
-.btn-control-danger:active { transform: scale(0.95); }
-
-/* Estilos de Status Card y Obstacles */
-.status-card {
-  background: linear-gradient(135deg, rgba(30, 58, 138, 0.8), rgba(55, 48, 163, 0.8)) !important;
-  backdrop-filter: blur(10px);
-  border-radius: 0.8rem;
-  border: 1px solid rgba(255,255,255,0.1);
 }
 
-.obstacle-card {
-  background: rgba(102, 126, 234, 0.1) !important;
-  backdrop-filter: blur(10px);
-  border-radius: 0.8rem;
-  border: 1px solid rgba(102, 126, 234, 0.3);
+.btn-control-primary:active,
+.btn-control-directional:active,
+.btn-control-rotation:active,
+.btn-control-danger:active {
+  transform: scale(0.95);
 }
 
+/* Botón Obstáculo */
 .obstacle-btn {
   background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple)) !important;
   border: none;
@@ -237,7 +210,7 @@ main {
   color: white !important;
 }
 
-/* Botones Velocidad Compactos */
+/* --- Botones de Velocidad Compactos --- */
 .compact-btn {
   background: rgba(255, 255, 255, 0.1) !important;
   border: 2px solid rgba(255, 255, 255, 0.2) !important;
@@ -254,7 +227,21 @@ main {
 .speed-medium.active-speed { background: linear-gradient(135deg, #f6ad55, #ed8936) !important; border-color: #f6ad55 !important; }
 .speed-high.active-speed { background: linear-gradient(135deg, #fc8181, #f56565) !important; border-color: #fc8181 !important; }
 
-/* Ajustes Responsive */
+/* --- Tablas (Headers Fijos) --- */
+.table-sticky-header th {
+  position: sticky;
+  top: 0;
+  background-color: #212529;
+  color: white;
+  z-index: 10;
+  border-bottom: 2px solid #4f5051;
+}
+
+.nowrap-col {
+  white-space: nowrap;
+}
+
+/* --- Responsive --- */
 @media (max-width: 768px) {
   .btn-control-primary i, .btn-control-danger i { font-size: 1.5rem; }
 }
